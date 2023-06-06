@@ -76,4 +76,6 @@ export interface IMessage {
     messageId: string,
     text?: string,
     isMe?: boolean,
+    uuid?: string,
+    createAt?: number,
 }

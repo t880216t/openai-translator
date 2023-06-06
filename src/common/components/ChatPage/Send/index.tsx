@@ -11,6 +11,7 @@ interface RMessage {
   messageId: string
   content: string
   isFullText: boolean
+  uuid: string
 }
 
 const { TextArea } = Input;
@@ -38,22 +39,22 @@ function Send(props: IProps) {
     setResult((record) => {
       const oldText = record?.text || ''
       if (message.isFullText) {
-          return {messageId: message.messageId, text: message.content, isMe: false}
+          return {messageId: message.messageId, text: message.content, isMe: false, uuid: props.uuid}
       }
-      return  {messageId: message.messageId, text: oldText + message.content, isMe: false}
+      return  {messageId: message.messageId, text: oldText + message.content, isMe: false, uuid: props.uuid}
     })
   }
 
   const onMessageResult = (messageId: string ,text: string | undefined) => {
     if (text){
-      setResult({messageId: messageId, text: text, isMe: false})
+      setResult({messageId: messageId, text: text, isMe: false, uuid: props.uuid})
     }
   }
 
   const submit = async (text: string) => {
     let message = text.trim();
     if (!message) return;
-    props.onMessageResult && props.onMessageResult({messageId: new Date().getTime().toString(),text: text, isMe: true})
+    props.onMessageResult && props.onMessageResult({messageId: new Date().getTime().toString(),text: text, isMe: true, uuid: props.uuid, createAt: new Date().getTime()})
     setResult(null)
     setOriginalText("")
 

@@ -11,3 +11,18 @@
     }
   }
 }
+
+.add-new-chart{
+  margin-top: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  .button{
+    border: 1px solid #d9d9e3;
+    border-radius: 4px;
+    color: #d9d9e3;
+    width: 90%;
+    box-sizing: border-box;
+    gap: .5rem;
+  }
+}
