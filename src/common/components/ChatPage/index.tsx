@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Layout, Button, Empty, ConfigProvider } from "antd";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { v4 as uuidv4 } from 'uuid'
@@ -28,6 +28,7 @@ export interface IInnerProps {
 
 export interface IProps extends IInnerProps {
   engine: Styletron
+  assistantPrompts?: string[]
 }
 
 export interface IHistoryList {
@@ -50,8 +51,14 @@ function ChatPage(props: IProps) {
   const [activitySessionId, setActivitySessionId] = useState(uuidv4().replace(/-/g, ''));
   const [activitySessionTitle, setActivitySessionTitle] = useState(DEFAULT_TITLE);
   const [historyList, setHistoryList] = useState<IHistoryList>({})
+  const [outPutText, setOutPutText] = useState("")
+  const [assistantPrompts, setAssistantPrompts] = useState([])
 
   const { themeType } = useTheme()
+
+  useEffect(() => {
+    console.log("assistantPrompts update", assistantPrompts);
+  }, [assistantPrompts])
 
   useEffect(() => {
     setOriginalText(props.text)
@@ -64,8 +71,6 @@ function ChatPage(props: IProps) {
   }, [historyList])
 
   useEffect(() => {
-    console.log("messageList", messageList);
-    console.log("activitySessionId", activitySessionId);
     if (Object.keys(messageList).length > 0) {
       const prevMessageList = localStorage.getItem(MESSAGE_LIST_KEY)
       if (prevMessageList) {
@@ -88,6 +93,14 @@ function ChatPage(props: IProps) {
     }
   }, [])
 
+  useEffect(() => {
+    if (outPutText) {
+      const container = document.querySelector('#messages') as HTMLElement;
+      container?.scrollTo({ top: 999999, behavior: 'smooth' });
+      container?.parentElement?.scrollTo({ top: 999999, behavior: 'smooth' });
+    }
+  }, [outPutText]);
+
   const onMessageResult = (message: IMessage) => {
     if (!message.messageId) return
     setMessageList((messageList) => {
@@ -96,6 +109,11 @@ function ChatPage(props: IProps) {
       }
       return {...messageList, [message.messageId]: message}
     })
+    if (message && message.isMe && message.text) {
+      setAssistantPrompts((prevAssistantPrompts) => {
+        return [...prevAssistantPrompts, message.text]
+      })
+    }
     if (!historyList.hasOwnProperty(message?.uuid) && message?.isMe) {
       setHistoryList((prevHistoryList) => ({
         [message.uuid]: {
@@ -105,6 +123,8 @@ function ChatPage(props: IProps) {
         },
         ...prevHistoryList,
       }));
+    }else {
+      setOutPutText(message?.text)
     }
   }
 
@@ -129,6 +149,14 @@ function ChatPage(props: IProps) {
         setActivitySessionId(uuid)
         setActivitySessionTitle(historyList[uuid].title)
         setCollapsed(true)
+        const questions = Object.values(messageList);
+        questions.forEach((message: IMessage) => {
+          if (message && message.isMe && message.text) {
+            setAssistantPrompts((prevAssistantPrompts) => {
+              return [...prevAssistantPrompts, message.text]
+            })
+          }
+        })
       }
     }
   }
@@ -139,6 +167,11 @@ function ChatPage(props: IProps) {
       const messageList = JSON.parse(prevMessageList)
       if (messageList[uuid]) {
         delete messageList[uuid]
+        if (uuid === activitySessionId) {
+          setMessageList({})
+          setActivitySessionId(uuidv4().replace(/-/g, ''))
+          setActivitySessionTitle(DEFAULT_TITLE)
+        }
         localStorage.setItem(MESSAGE_LIST_KEY, JSON.stringify(messageList))
         setHistoryList((prevHistoryList) => {
           delete prevHistoryList[uuid]
@@ -184,7 +217,7 @@ function ChatPage(props: IProps) {
           )}
         </Content>
         <Footer style={{padding: "10px 20px", background: '#ffffff'}}>
-          <Send uuid={activitySessionId} engine={props?.engine} text={originalText} onMessageResult={onMessageResult} />
+          <Send assistantPrompts={assistantPrompts} uuid={activitySessionId} engine={props?.engine} text={originalText} onMessageResult={onMessageResult} />
         </Footer>
       </Layout>
     </Layout>

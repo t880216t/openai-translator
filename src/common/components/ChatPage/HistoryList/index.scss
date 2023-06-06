@@ -1,6 +1,4 @@
-.menu-item{
-  display: flex;
-  flex-direction: row;
-  width: 200px;
-  justify-content: space-between;
+.history-list-wrap{
+  height: 95vh;
+  overflow-y: auto;
 }

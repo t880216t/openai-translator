@@ -19,6 +19,12 @@ const { TextArea } = Input;
 function Send(props: IProps) {
   const [originalText, setOriginalText] = useState(props.text)
   const [result, setResult] = useState<IMessage | null>(null);
+  const [userPrompts, setUserPrompts] = useState<string[]>(props.assistantPrompts || [])
+
+  useEffect(() => {
+    console.log("assistantPrompts props update", props.assistantPrompts);
+    setUserPrompts(props.assistantPrompts || [])
+  }, [props.assistantPrompts])
 
   useEffect(() => {
     setOriginalText(props.text)
@@ -60,8 +66,10 @@ function Send(props: IProps) {
 
     const controller = new AbortController()
     const { signal } = controller
+    console.log("userPrompts", userPrompts);
     await chat({
       text: text,
+      assistantPrompts: userPrompts,
       onStatusCode: (statusCode: any) => {
         console.log(statusCode);
       },
@@ -80,51 +88,10 @@ function Send(props: IProps) {
           console.log(error)
       },
     })
-
-    // const isImage = message.startsWith("/image");
-    // if (isImage) {
-    //   message = message.replace("/image", "").trim();
-    // }
-    //
-    // if (currentHistory?.title && currentHistory.title === DEFAULT_TITLE) {
-    //   updateHistory({ title: message, uuid });
-    // }
-    //
-    // addChat(uuid, {
-    //   dateTime: new Date().toLocaleString(),
-    //   text: message,
-    //   inversion: true,
-    //   isImage,
-    //   error: false,
-    //   conversationOptions: null,
-    //   requestOptions: { prompt: message, options: null },
-    // });
-    // setValue("");
-    // onMessageUpdate();
-    //
-    // const responseList = conversationList.filter((item) => !item.inversion && !item.error);
-    // const lastContext = responseList[responseList.length - 1]?.conversationOptions;
-    // const options =
-    //   lastContext && hasContext ? { ...lastContext, isImage, model } : { isImage, model };
-    // addChat(uuid, {
-    //   dateTime: new Date().toLocaleString(),
-    //   text: "",
-    //   loading: true,
-    //   inversion: false,
-    //   isImage,
-    //   model,
-    //   error: false,
-    //   conversationOptions: null,
-    //   requestOptions: { prompt: message, options },
-    // });
-    // onMessageUpdate();
-    //
-    // //  if converationList is empty, update index should be 1, because there are two addChat method executes
-    // request(conversationList.length ? conversationList.length - 1 : 1, onMessageUpdate);
   };
 
   const onPressEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.ctrlKey) {
+    if (e.key === "Enter" && e.ctrlKey) {
       e.preventDefault();
       submit((e.target as HTMLTextAreaElement).value);
     }
@@ -141,7 +108,7 @@ function Send(props: IProps) {
           onChange={(e) => onInputChange(e.target.value)}
           bordered={false}
           onPressEnter={onPressEnter}
-          placeholder="来说点什么吧...（Ctrl + Enter = 换行）"
+          placeholder="来说点什么吧...（Ctrl + Enter = 发送）"
           autoSize={{ minRows: 1, maxRows: 2 }}
         />
       </div>

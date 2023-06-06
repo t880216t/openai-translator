@@ -3,6 +3,8 @@ import { MessageOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant
 import type { MenuProps } from 'antd';
 import { Menu, Modal } from 'antd';
 
+import './index.scss'
+
 interface IHistoryProps {
   historyList: Record<string, DataItem>;
   onSelect: (uuid: string) => void;
@@ -87,7 +89,7 @@ function HistoryList(props: IHistoryProps) {
   };
 
   return (
-    <div>
+    <div className="history-list-wrap">
       <Menu
         theme="dark"
         mode="inline"

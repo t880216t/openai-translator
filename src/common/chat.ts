@@ -195,7 +195,7 @@ export async function chat(query: any) {
     let rolePrompt = ''
     let commandPrompt = ''
     let contentPrompt = query.text
-    const assistantPrompts: string[] = []
+    let assistantPrompts: string[] = query?.assistantPrompts
     let quoteProcessor: QuoteProcessor | undefined
     const settings = await utils.getSettings()
     let isWordMode = false
@@ -262,6 +262,7 @@ export async function chat(query: any) {
             parent_message_id: utils.generateUUID(),
         }
     } else {
+        console.log("assistantPrompts", query.assistantPrompts);
         const messages = [
             {
                 role: 'system',
