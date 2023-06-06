@@ -1,16 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import {BarsOutlined, PlusOutlined} from '@ant-design/icons';
-import {IProps} from '../index'
+
+interface IHeaderProps {
+  collapsed: boolean
+  onCollapse?: (collapsed: boolean) => void
+}
 
 import "./index.scss";
 
-function ChatHeader(props: IProps) {
+function ChatHeader(props: IHeaderProps) {
+  const [collapsed, setCollapsed] = useState(props.collapsed);
+
+  const onCollapse = () => {
+    setCollapsed(!collapsed)
+    props.onCollapse && props.onCollapse(!collapsed)
+  }
 
   return (
     <div className="header-wrap">
       <div className="header-left">
-        <Button type="text" icon={<BarsOutlined style={{color: "white", fontSize: 22}}/>} />
+        <Button onClick={() => onCollapse()} type="text" icon={<BarsOutlined style={{color: "white", fontSize: 22}}/>} />
       </div>
       <div className="header-title">
         <span>{"New chat"}</span>

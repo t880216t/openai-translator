@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Button } from 'antd';
+import { Layout, Button, Empty } from "antd";
 
+import { useTheme } from '../../hooks/useTheme'
 import Messages  from './Messages'
 import ChatHeader  from './ChatHeader'
 import Send  from './Send'
@@ -30,6 +31,9 @@ export interface IProps extends IInnerProps {
 function ChatPage(props: IProps) {
   const [originalText, setOriginalText] = useState(props.text)
   const [messageList, setMessageList] = useState<{[key: string]: IMessage}>({})
+  const [collapsed, setCollapsed] = useState(true);
+
+  const { themeType } = useTheme()
 
   useEffect(() => {
     setOriginalText(props.text)
@@ -45,23 +49,32 @@ function ChatPage(props: IProps) {
     })
   }
 
+  const onCollapse = (collapsed: boolean) => {
+    setCollapsed(collapsed);
+  }
+
   return (
     <Layout className="chat-warp">
       <Sider
         collapsible
         collapsedWidth={0}
+        collapsed={collapsed}
         breakpoint="md"
-        theme="dark"
+        theme={themeType || 'dark'}
         trigger={null}
       >
         Sider
       </Sider>
       <Layout>
         <Header style={{paddingInline: 10}}>
-          <ChatHeader engine={props?.engine} />
+          <ChatHeader collapsed={collapsed} onCollapse={onCollapse} />
         </Header>
         <Content>
-          <Messages messageList={messageList} />
+          {(Object.keys(messageList).length !== 0 ) ? <Messages messageList={messageList} /> : (
+            <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <Empty  description={"开始你的对话吧"} />
+            </div>
+          )}
         </Content>
         <Footer style={{padding: "10px 20px", background: '#ffffff'}}>
           <Send engine={props?.engine} text={originalText} onMessageResult={onMessageResult} />
