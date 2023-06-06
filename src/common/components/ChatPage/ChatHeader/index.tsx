@@ -1,30 +1,25 @@
 import React, { useState } from "react";
 import { Button } from "antd";
+import {BarsOutlined, PlusOutlined} from '@ant-design/icons';
+import {IProps} from '../index'
 
 import "./index.scss";
 
-function BasicComponent() {
-  const [count, setCount] = useState(0);
-
-  const handleClick = () => {
-    setCount(count + 1);
-  };
+function ChatHeader(props: IProps) {
 
   return (
     <div className="header-wrap">
       <div className="header-left">
-        sider
+        <Button type="text" icon={<BarsOutlined style={{color: "white", fontSize: 22}}/>} />
       </div>
       <div className="header-title">
-        <span>test</span>
+        <span>{"New chat"}</span>
       </div>
       <div className="header-right">
-        <Button type="primary" onClick={handleClick}>
-          add
-        </Button>
+        <Button type="text" icon={<PlusOutlined style={{color: "white", fontSize: 22}}/>} />
       </div>
     </div>
   );
 }
 
-export default BasicComponent;
+export default ChatHeader;

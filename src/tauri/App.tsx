@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Translator } from '../common/components/Translator'
+import ToolWarp  from '../common/components/ToolWarp'
 import { Client as Styletron } from 'styletron-engine-atomic'
 import { appWindow } from '@tauri-apps/api/window'
 import { listen, Event } from '@tauri-apps/api/event'
@@ -157,7 +158,7 @@ export function App() {
                     </>
                 )}
             </div>
-            <Translator
+            <ToolWarp
                 uuid={uuid}
                 text={text}
                 engine={engine}

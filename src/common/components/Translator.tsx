@@ -1,3 +1,5 @@
+// noinspection TypeScriptValidateTypes
+
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import toast, { Toaster } from 'react-hot-toast'
@@ -15,6 +17,7 @@ import { StatefulTooltip } from 'baseui-sd/tooltip'
 import { detectLang, getLangConfig, sourceLanguages, targetLanguages, LangCode } from './lang/lang'
 import { translate, TranslateMode } from '../translate'
 import { Select, Value, Option } from 'baseui-sd/select'
+import {Radio, RadioGroup} from 'baseui-sd/radio';
 import { RxEraser, RxReload, RxSpeakerLoud } from 'react-icons/rx'
 import { calculateMaxXY, queryPopupCardElement } from '../../browser-extension/content_script/utils'
 import { clsx } from 'clsx'
@@ -64,6 +67,8 @@ import useResizeObserver from 'use-resize-observer'
 import _ from 'underscore'
 import { GlobalSuspense } from './GlobalSuspense'
 
+import { Switch } from 'antd';
+
 const cache = new LRUCache({
     max: 500,
     maxSize: 5000,
@@ -105,6 +110,7 @@ const useStyles = createUseStyles({
                   paddingLeft: '16px',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'space-between',
                   background: props.themeType === 'dark' ? 'rgba(31, 31, 31, 0.5)' : 'rgba(255, 255, 255, 0.5)',
                   backdropFilter: 'blur(10px)',
               }
@@ -1255,6 +1261,8 @@ function InnerTranslator(props: IInnerTranslatorProps) {
 
     const enableVocabulary = !isUserscript()
 
+    const [actionType, setActionType] = React.useState('1');
+
     return (
         <div
             className={clsx(styles.popupCard, {
@@ -1295,7 +1303,7 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                         <div data-tauri-drag-region className={styles.iconContainer}>
                             <img data-tauri-drag-region className={styles.icon} src={icon} />
                             <div data-tauri-drag-region className={styles.iconText} ref={logoTextRef}>
-                                OpenAI Translator
+                                AI Work Helper
                             </div>
                         </div>
                         <div className={styles.popupCardHeaderActionsContainer} ref={languagesSelectorRef}>
@@ -1310,6 +1318,11 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                                         Root: {
                                             style: {
                                                 minWidth: '110px',
+                                                height: '27px',
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                gap: '4px',
                                             },
                                         },
                                     }}
@@ -1344,6 +1357,11 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                                         Root: {
                                             style: {
                                                 minWidth: '110px',
+                                                height: '27px',
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                gap: '4px',
                                             },
                                         },
                                     }}
@@ -1597,20 +1615,20 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                                                     : Math.min(Math.max(editableText.split('\n').length, 3), 12)
                                             }
                                             onChange={(e) => setEditableText(e.target.value)}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    if (!e.shiftKey) {
-                                                        e.preventDefault()
-                                                        e.stopPropagation()
-                                                        if (!activateAction) {
-                                                            setActivateAction(
-                                                                actions?.find((action) => action.mode === 'translate')
-                                                            )
-                                                        }
-                                                        setOriginalText(editableText)
-                                                    }
-                                                }
-                                            }}
+                                            // onKeyPress={(e) => {
+                                            //     if (e.key === 'Enter') {
+                                            //         if (!e.shiftKey) {
+                                            //             e.preventDefault()
+                                            //             e.stopPropagation()
+                                            //             if (!activateAction) {
+                                            //                 setActivateAction(
+                                            //                     actions?.find((action) => action.mode === 'translate')
+                                            //                 )
+                                            //             }
+                                            //             setOriginalText(editableText)
+                                            //         }
+                                            //     }
+                                            // }}
                                         />
                                         <div
                                             style={{

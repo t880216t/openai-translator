@@ -71,3 +71,9 @@ export interface ISettings {
     disableCollectingStatistics?: boolean
     allowUsingClipboardWhenSelectedTextNotAvailable?: boolean
 }
+
+export interface IMessage {
+    messageId: string,
+    text?: string,
+    isMe?: boolean,
+}

@@ -1,0 +1,22 @@
+.header-wrap{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  color: white;
+  justify-content: space-between;
+  .header-left{
+    color: white;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 5px;
+  }
+  .header-right{
+    color: white;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 5px;
+  }
+  .header-title{
+    font-size: 1rem;
+  }
+}
