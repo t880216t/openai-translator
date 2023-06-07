@@ -1068,7 +1068,7 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
             >
                 <img width='22' src={icon} alt='logo' />
                 <h2>
-                    OpenAI Translator
+                    AI Helper
                     {AppConfig?.version ? (
                         <a
                             href='https://github.com/yetone/openai-translator/releases'

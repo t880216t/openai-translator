@@ -130,7 +130,7 @@
   },
   "build": {
     "appId": "xyz.yetone.apps",
-    "productName": "OpenAI Translator",
+    "productName": "AI Helper",
     "extraMetadata": {
       "name": "openai-translator",
       "main": "main.js"

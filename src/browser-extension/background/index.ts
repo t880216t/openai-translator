@@ -9,7 +9,7 @@ browser.contextMenus.create(
     {
         id: 'open-translator',
         type: 'normal',
-        title: 'OpenAI Translator',
+        title: 'AI Helper',
         contexts: ['page', 'selection'],
     },
     () => {

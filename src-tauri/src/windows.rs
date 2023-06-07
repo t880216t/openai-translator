@@ -246,7 +246,7 @@ pub fn show_main_window(center: bool, set_focus: bool) -> tauri::Window {
             .skip_taskbar(true)
             .center()
             .focused(false)
-            .title("OpenAI Translator");
+            .title("AI Helper");
 
             #[cfg(target_os = "macos")]
             {
@@ -301,7 +301,7 @@ pub fn show_action_manager_window() {
             .skip_taskbar(true)
             .center()
             .focused(true)
-            .title("OpenAI Translator Action Manager");
+            .title("AI Helper Action Manager");
 
             #[cfg(target_os = "macos")]
             {

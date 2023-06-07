@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Layout, Button, Empty, ConfigProvider } from "antd";
+import { Layout, Button, Empty, message as notice } from "antd";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { v4 as uuidv4 } from 'uuid'
 import {PlusOutlined} from '@ant-design/icons';
@@ -129,7 +129,15 @@ function ChatPage(props: IProps) {
   }
 
   const onCollapse = (collapsed: boolean) => {
-    setCollapsed(collapsed);
+    if (Object.keys(historyList).length > 0) {
+      setCollapsed(collapsed);
+    }else{
+      if (!collapsed) {
+        notice.warning("还没有历史消息哦，开始会话吧。")
+      }else {
+        setCollapsed(collapsed);
+      }
+    }
   }
 
   const onCreate = () => {
@@ -175,6 +183,10 @@ function ChatPage(props: IProps) {
         localStorage.setItem(MESSAGE_LIST_KEY, JSON.stringify(messageList))
         setHistoryList((prevHistoryList) => {
           delete prevHistoryList[uuid]
+          if (Object.keys(prevHistoryList).length === 0) {
+            setCollapsed(!collapsed)
+            localStorage.setItem(HISTORY_LIST_KEY, JSON.stringify(prevHistoryList))
+          }
           return {...prevHistoryList}
         })
       }

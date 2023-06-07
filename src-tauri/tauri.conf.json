@@ -7,8 +7,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "OpenAI Translator",
-    "version": "0.1.0"
+    "productName": "AI Helper",
+    "version": "0.9.9"
   },
   "tauri": {
     "allowlist": {
@@ -107,7 +107,7 @@
         "minWidth": 540,
         "minHeight": 600,
         "resizable": true,
-        "title": "OpenAI Translator",
+        "title": "AI Helper",
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
         "visible": true

@@ -1303,7 +1303,7 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                         <div data-tauri-drag-region className={styles.iconContainer}>
                             <img data-tauri-drag-region className={styles.icon} src={icon} />
                             <div data-tauri-drag-region className={styles.iconText} ref={logoTextRef}>
-                                AI Work Helper
+                                AI Helper
                             </div>
                         </div>
                         <div className={styles.popupCardHeaderActionsContainer} ref={languagesSelectorRef}>
