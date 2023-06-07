@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {SendOutlined} from '@ant-design/icons'
-import { Input, Button, Mentions } from 'antd';
+import { Input, Button, Mentions, ConfigProvider } from 'antd';
 import {IProps} from '../index'
 import {chat} from '../../../chat'
 
@@ -20,6 +20,9 @@ function Send(props: IProps) {
   const [originalText, setOriginalText] = useState(props.text)
   const [result, setResult] = useState<IMessage | null>(null);
   const [userPrompts, setUserPrompts] = useState<string[]>(props.assistantPrompts || [])
+  const [helpPrompts, setHelpPrompts] = useState( [])
+  const [matchedData, setMatchedData] = useState([]);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   useEffect(() => {
     console.log("assistantPrompts props update", props.assistantPrompts);
@@ -35,6 +38,15 @@ function Send(props: IProps) {
       props.onMessageResult?.(result);
     }
   }, [result]);
+
+  useEffect(() => {
+    fetch('https://raw.githubusercontent.com/t880216t/chatgpt-prompt-for-tester/main/prompts_zh.json')
+      .then(response => response.json())
+      .then(data => {
+        setHelpPrompts(data);
+      })
+      .catch(e => console.log("Oops, error", e))
+  }, [])
 
   const onInputChange = (value: string) => {
     const regx = new RegExp("/image\\$\\s*([^\\s]+)");
@@ -63,10 +75,10 @@ function Send(props: IProps) {
     props.onMessageResult && props.onMessageResult({messageId: new Date().getTime().toString(),text: text, isMe: true, uuid: props.uuid, createAt: new Date().getTime()})
     setResult(null)
     setOriginalText("")
+    setSubmitLoading(true)
 
     const controller = new AbortController()
     const { signal } = controller
-    console.log("userPrompts", userPrompts);
     await chat({
       text: text,
       assistantPrompts: userPrompts,
@@ -81,11 +93,11 @@ function Send(props: IProps) {
         onMessagePrinting(message)
       },
       onFinish: (reason: any) => {
-          console.log(reason)
-          onMessageResult(result?.messageId, result?.text)
+        onMessageResult(result?.messageId, result?.text)
+        setSubmitLoading(false)
       },
       onError: (error: any) => {
-          console.log(error)
+        setSubmitLoading(false)
       },
     })
   };
@@ -97,25 +109,39 @@ function Send(props: IProps) {
     }
   };
 
+  const onSearch = (search: string) => {
+    const matchedItems = helpPrompts
+      .filter(item => item.key.toLowerCase().includes(search.toLowerCase()))
+      .map((item, index) => ({ label: item.key, key: `${item.key}_${index}`, value: item.value }));
+    setMatchedData(matchedItems);
+  };
+
+  const onSelect = (text: string, prefix: string) => {
+    setOriginalText(text)
+  };
+
   return (
     <div className="input-wrap">
-      <div className="input-container">
-        <TextArea
-          className="input"
-          allowClear
-          autoFocus
-          value={originalText}
-          onChange={(e) => onInputChange(e.target.value)}
-          bordered={false}
-          onPressEnter={onPressEnter}
-          placeholder="来说点什么吧...（Ctrl + Enter = 发送）"
-          autoSize={{ minRows: 1, maxRows: 2 }}
-        />
-      </div>
+      <Mentions
+        className="mentions"
+        style={{ border: 'none' }}
+        onSearch={onSearch}
+        onSelect={(record: any, prefix) => onSelect(record.value, prefix)}
+        onChange={(value) => onInputChange(value)}
+        placeholder="来说点什么吧...（Ctrl + Enter = 发送），输入 / 查看更多推荐"
+        autoFocus
+        autoSize
+        value={originalText}
+        prefix={"/"}
+        options={matchedData}
+        onPressEnter={onPressEnter}
+      />
       <Button
         className="send"
         type="text"
         icon={<SendOutlined />}
+        loading={submitLoading}
+        onClick={async () => await submit(originalText)}
       />
     </div>
   );

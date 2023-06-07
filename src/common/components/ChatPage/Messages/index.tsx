@@ -20,7 +20,7 @@ function Messages(props: IMessageProps) {
   return (
     <div className="message-wrap" id="messages">
       {list && Object.keys(list).map((key) => {
-        return <Message messageId={key} isMe={list[key].isMe} text={list[key].text} />
+        return <Message key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
       })}
     </div>
   );
