@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { Button, ConfigProvider, Switch } from "antd";
+import { Button, ConfigProvider, Switch, Tooltip } from "antd";
 import React from 'react';
 import { Translator } from "./Translator";
 import ChatPage from "./ChatPage";
-import { Tooltip } from "./Tooltip";
+
+import { ITranslatorProps } from "./Translator"
 
 
-function ToolWarp(props: any) {
+function ToolWarp(props: ITranslatorProps) {
   const [actionModel, setActionModel] = useState(true);
 
-  const handleActionModelChange = (value) => {
+  const handleActionModelChange = (value: boolean) => {
     setActionModel(value);
   };
 
@@ -28,14 +29,14 @@ function ToolWarp(props: any) {
       }}>
         {actionModel && <Translator {...props} />}
         {!actionModel && <ChatPage {...props} />}
-        <Tooltip content={"切换使用模式"} placement='left'>
+        <Tooltip title={"切换使用模式"}>
           <div style={{
             position: "fixed",
             right: 15,
             top: 5,
             zIndex: 9999999999
           }}>
-            <Switch style={{border: '1px solid grey'}} value={actionModel} onClick={handleActionModelChange} size="small" checkedChildren="提问" unCheckedChildren="聊天" defaultChecked />
+            <Switch style={{border: '1px solid grey'}} checked={actionModel} onClick={handleActionModelChange} size="small" checkedChildren="提问" unCheckedChildren="聊天" defaultChecked />
           </div>
         </Tooltip>
       </div>

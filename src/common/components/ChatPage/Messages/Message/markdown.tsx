@@ -5,8 +5,36 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
+import rehypeSlug from 'rehype-slug';
+import rehypeRaw from 'rehype-raw';
 import { Button, CopyButton } from '@mantine/core';
-import { useMemo } from 'react';
+import mermaid from 'mermaid';
+import 'github-markdown-css';
+import React, { useMemo } from 'react';
+
+import './index.scss'
+
+
+const MermaidComponent = ({ chart, content }) => {
+  React.useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: true
+    });
+  }, []);
+
+  React.useEffect(() => {
+    mermaid.contentLoaded();
+  }, [chart]);
+
+  return (
+    <div style={{ width: '78vw', overflowX: 'auto'}}>
+      <div className="mermaid-content">
+        {content}
+      </div>
+      <div className="mermaid">{chart}</div>
+    </div>
+  );
+};
 
 const Code = styled.div`
     padding: 0;
@@ -70,7 +98,7 @@ export function Markdown(props: MarkdownProps) {
     <div className={classes.join(' ')}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeKatex]}
+        rehypePlugins={[rehypeKatex, rehypeSlug, rehypeRaw]}
         components={{
           ol({ start, children }) {
             return <ol start={start ?? 1} style={{ counterReset: `list-item ${(start || 1)}` }}>
@@ -80,6 +108,9 @@ export function Markdown(props: MarkdownProps) {
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '')
             const code = String(children);
+            if (match?.[1] === "mermaid") {
+              return <MermaidComponent chart={code} content={children} />;
+            }
             return !inline ? (<>
               <Code>
                 <Header>

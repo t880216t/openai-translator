@@ -94,8 +94,8 @@ export function getLangName(langCode: string): string {
     return langName || langMap.get(langCode) || langCode
 }
 
-export async function detectLang(text: string): Promise<LangCode> {
-    const detectedText = text.trim()
+export async function detectLang(text: (string | undefined)): Promise<LangCode> {
+    const detectedText = text?.trim()
     return new Promise((resolve) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const langName = (window as any).detectLanguage(detectedText)
@@ -108,7 +108,7 @@ export async function detectLang(text: string): Promise<LangCode> {
         const langCode = ISO6391.getCode(langName) || langMapReverse.get(langName) // can never be 'zh-CN' or 'zh-TW'
         console.debug('detected langCode:', langCode)
         if (langCode === 'zh') {
-            resolve(isTraditional(detectedText) ? 'zh-Hant' : 'zh-Hans')
+            resolve(isTraditional(detectedText || "") ? 'zh-Hant' : 'zh-Hans')
             return
         }
         resolve(intoLangCode(langCode))

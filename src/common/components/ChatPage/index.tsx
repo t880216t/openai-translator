@@ -52,8 +52,7 @@ function ChatPage(props: IProps) {
   const [activitySessionTitle, setActivitySessionTitle] = useState(DEFAULT_TITLE);
   const [historyList, setHistoryList] = useState<IHistoryList>({})
   const [outPutText, setOutPutText] = useState("")
-  const [assistantPrompts, setAssistantPrompts] = useState([])
-
+  const [assistantPrompts, setAssistantPrompts] = useState<string[]>([]);
   const { themeType } = useTheme()
 
   useEffect(() => {
@@ -110,21 +109,28 @@ function ChatPage(props: IProps) {
       return {...messageList, [message.messageId]: message}
     })
     if (message && message.isMe && message.text) {
+      // @ts-ignore
       setAssistantPrompts((prevAssistantPrompts) => {
-        return [...prevAssistantPrompts, message.text]
+        const updatedPrompts: string[] = [...prevAssistantPrompts, message.text||''];
+        return updatedPrompts;
       })
     }
-    if (!historyList.hasOwnProperty(message?.uuid) && message?.isMe) {
+    if (message?.uuid !== undefined && !historyList.hasOwnProperty(message.uuid) && message.isMe) {
       setHistoryList((prevHistoryList) => ({
-        [message.uuid]: {
-          title: `${message.text?.trim().substring(0, 5)}...`,
-          createAt: message.createAt,
-          uuid: message.uuid,
-        },
+        ...(message.uuid
+          ? {
+            [String(message.uuid)]: {
+              title: `${message.text?.trim().substring(0, 5)}...`,
+              createAt: Number(message.createAt),
+              uuid: message.uuid,
+            },
+          }
+          : {}),
         ...prevHistoryList,
       }));
+
     }else {
-      setOutPutText(message?.text)
+      setOutPutText(message?.text || '');
     }
   }
 
@@ -158,13 +164,15 @@ function ChatPage(props: IProps) {
         setActivitySessionTitle(historyList[uuid].title)
         setCollapsed(true)
         const questions = Object.values(messageList);
+        // @ts-ignore
         questions.forEach((message: IMessage) => {
           if (message && message.isMe && message.text) {
+            // @ts-ignore
             setAssistantPrompts((prevAssistantPrompts) => {
-              return [...prevAssistantPrompts, message.text]
-            })
+              return [...prevAssistantPrompts, message.text];
+            });
           }
-        })
+        });
       }
     }
   }
@@ -201,7 +209,7 @@ function ChatPage(props: IProps) {
         collapsedWidth={0}
         collapsed={collapsed}
         breakpoint="md"
-        theme={themeType || 'dark'}
+        theme={'dark'}
         trigger={null}
       >
         <div className="add-new-chart">

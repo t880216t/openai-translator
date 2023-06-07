@@ -5,6 +5,7 @@ import { CopyButton } from '@mantine/core';
 
 import "./index.scss"
 import { IMessage } from "../../../../types";
+// @ts-ignore
 import ChatGPTLogo from '../../../../assets/images/ChatGPT_logo.svg';
 import { Markdown } from './markdown'
 import { speak } from "../../../../tts";
@@ -32,7 +33,7 @@ function Message(props: IMessage) {
     }
     setIsSpeakingText(true)
     const { stopSpeak } = await speak({
-      text: content,
+      text: content || '',
       lang: sourceLang,
       onFinish: () => setIsSpeakingText(false),
     })
@@ -48,7 +49,7 @@ function Message(props: IMessage) {
       </div>
       <div className="content-wrap">
         <div className="content">
-          <Markdown content={content} />
+          <Markdown content={content || ''} />
         </div>
         <div className="action-wrap">
           <div>
@@ -56,7 +57,7 @@ function Message(props: IMessage) {
               <Button onClick={handleEditSpeakAction} type="text" icon={<NotificationOutlined style={{color: '#b3b3ba'}} />} />
             </Tooltip>
           </div>
-          <CopyButton value={content}>
+          <CopyButton value={content || ''}>
             {({ copy, copied }) => (
               <Tooltip title="复制">
                 <Button onClick={copy} type="text" icon={<CopyOutlined style={{color: '#b3b3ba'}} />} />

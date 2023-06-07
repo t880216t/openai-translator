@@ -10,6 +10,7 @@ import { useTheme } from '../common/hooks/useTheme'
 import { useMemoWindow } from '../common/hooks/useMemoWindow'
 import { v4 as uuidv4 } from 'uuid'
 import { PREFIX } from '../common/constants'
+import { ISettings } from "../common/types";
 
 const engine = new Styletron({
     prefix: `${PREFIX}-styletron-`,
@@ -167,7 +168,7 @@ export function App() {
                 defaultShowSettings
                 editorRows={10}
                 containerStyle={{ paddingTop: '26px' }}
-                onSettingsSave={(oldSettings) => {
+                onSettingsSave={(oldSettings: ISettings) => {
                     invoke('clear_config_cache')
                     bindHotkey(oldSettings.hotkey)
                     bindOCRHotkey(oldSettings.ocrHotkey)

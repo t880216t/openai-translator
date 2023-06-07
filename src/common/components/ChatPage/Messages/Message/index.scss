@@ -21,10 +21,12 @@
   }
   .content-wrap{
     display: flex;
-    flex: 9;
+    flex: 8;
     flex-direction: column;
     .content{
       padding: 0 .1rem;
+      max-width: 80vw;
+      overflow-x: auto;
     }
     .action-wrap{
       display: flex;
@@ -43,4 +45,10 @@
   padding: 1rem;
   --tw-bg-opacity: 1;
   background-color: rgba(247,247,248,var(--tw-bg-opacity));
+}
+
+.mermaid-content{
+  margin: 10px 0;
+  padding: 10px;
+  background: antiquewhite;
 }

@@ -12,6 +12,13 @@ interface RMessage {
   content: string
   isFullText: boolean
   uuid: string
+  role?: string
+}
+
+interface Item {
+  key: string;
+  value: string;
+  label: string;
 }
 
 const { TextArea } = Input;
@@ -21,7 +28,7 @@ function Send(props: IProps) {
   const [result, setResult] = useState<IMessage | null>(null);
   const [userPrompts, setUserPrompts] = useState<string[]>(props.assistantPrompts || [])
   const [helpPrompts, setHelpPrompts] = useState( [])
-  const [matchedData, setMatchedData] = useState([]);
+  const [matchedData, setMatchedData] = useState<Item[]>([]);
   const [submitLoading, setSubmitLoading] = useState(false);
 
   useEffect(() => {
@@ -40,7 +47,7 @@ function Send(props: IProps) {
   }, [result]);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/t880216t/chatgpt-prompt-for-tester/main/prompts_zh.json')
+    fetch('http://42.192.93.252:9000/prompt/prompts_zh.json')
       .then(response => response.json())
       .then(data => {
         setHelpPrompts(data);
@@ -86,14 +93,15 @@ function Send(props: IProps) {
         console.log(statusCode);
       },
       signal,
-      onMessage: (message: { role: any; }) => {
+      onMessage: (message: { role: any }) => {
         if (message.role) {
             return
         }
+        // @ts-ignore
         onMessagePrinting(message)
       },
       onFinish: (reason: any) => {
-        onMessageResult(result?.messageId, result?.text)
+        onMessageResult(result?.messageId || '', result?.text)
         setSubmitLoading(false)
       },
       onError: (error: any) => {
@@ -111,8 +119,8 @@ function Send(props: IProps) {
 
   const onSearch = (search: string) => {
     const matchedItems = helpPrompts
-      .filter(item => item.key.toLowerCase().includes(search.toLowerCase()))
-      .map((item, index) => ({ label: item.key, key: `${item.key}_${index}`, value: item.value }));
+      .filter((item: Item) => item?.key.toLowerCase().includes(search.toLowerCase()))
+      .map((item: Item, index) => ({ label: item?.key, key: `${item?.key}_${index}`, value: item?.value }));
     setMatchedData(matchedItems);
   };
 
@@ -141,7 +149,7 @@ function Send(props: IProps) {
         type="text"
         icon={<SendOutlined />}
         loading={submitLoading}
-        onClick={async () => await submit(originalText)}
+        onClick={async () => await submit(originalText || "")}
       />
     </div>
   );

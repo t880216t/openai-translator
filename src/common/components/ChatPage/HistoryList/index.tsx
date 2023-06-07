@@ -16,7 +16,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 interface DataItem {
   title: string;
   createAt: number;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   uuid: string;
 }
 
@@ -24,7 +24,15 @@ interface FormattedDataItem {
   label: string;
   group: boolean;
   icon: React.ReactNode;
-  children: { label: string; key: string }[];
+  children: { label: string; key: string, icon: React.ReactNode }[];
+}
+
+interface RecordType {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  group?: boolean;
+  children?: { label: string; key: string }[];
 }
 
 function formatData(data: Record<string, DataItem>): FormattedDataItem[] {
@@ -67,21 +75,28 @@ function formatDate(timestamp: number): string {
 }
 
 function HistoryList(props: IHistoryProps) {
-  const [historyMenuData, setHistoryMenuData] = useState<MenuItem>(null)
+  const [historyMenuData, setHistoryMenuData] = useState<FormattedDataItem[]>([]);
   const [open, setOpen] = useState(false);
-  const [record, setRecord] = useState(null);
+  const [record, setRecord] = useState<RecordType>({
+    key: '',
+    label: '',
+    icon: null,
+    group: false,
+    children: []
+  });
+
 
   useEffect(() => {
     const formattedData = formatData(props.historyList);
     setHistoryMenuData(formattedData)
   }, [props.historyList])
 
-  const onClick= (e) => {
-    props.onSelect(e.key)
+  const onClick= (e: MenuItem) => {
+    props.onSelect(e?.key as string);
   };
 
 
-  const handleDelete = (e, record) => {
+  const handleDelete = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, record: RecordType) => {
     e.preventDefault()
     e.stopPropagation()
     setOpen(true)
@@ -96,6 +111,7 @@ function HistoryList(props: IHistoryProps) {
         inlineIndent={16}
         inlineCollapsed={false}
         // items={historyMenuData}
+        style={{height: '100%'}}
       >
         {historyMenuData && historyMenuData.map((item) => (
           <Menu.ItemGroup key={item.label} title={item.label}>
@@ -117,11 +133,23 @@ function HistoryList(props: IHistoryProps) {
         onOk={() => {
           props?.onDelete(record.key)
           setOpen(false)
-          setRecord(null)
+          setRecord({
+            key: '',
+            label: '',
+            icon: null,
+            group: false,
+            children: []
+          })
         }}
         onCancel={() => {
           setOpen(false)
-          setRecord(null)
+          setRecord({
+            key: '',
+            label: '',
+            icon: null,
+            group: false,
+            children: []
+          })
         }}
       >
         <p>{`确认删除会话：${record?.label}`}</p>
