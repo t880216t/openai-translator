@@ -14,8 +14,12 @@ import React, { useMemo } from 'react';
 
 import './index.scss'
 
+interface MermaidComponentProps {
+  chart: string;
+  content: string;
+}
 
-const MermaidComponent = ({ chart, content }) => {
+const MermaidComponent: React.FC<MermaidComponentProps> = ({ chart, content }) => {
   React.useEffect(() => {
     mermaid.initialize({
       startOnLoad: true
@@ -109,7 +113,7 @@ export function Markdown(props: MarkdownProps) {
             const match = /language-(\w+)/.exec(className || '')
             const code = String(children);
             if (match?.[1] === "mermaid") {
-              return <MermaidComponent chart={code} content={children} />;
+              return <MermaidComponent chart={React.Children.toArray(code).join('') || ''} content={React.Children.toArray(children).join('') || ''} />;
             }
             return !inline ? (<>
               <Code>
