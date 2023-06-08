@@ -17,7 +17,7 @@
         <array>
             <dict>
                 <key>Link</key>
-                <string>https://github.com/openai-translator/openai-translator</string>
+                <string>https://github.com/t880216t/openai-translator</string>
                 <key>Name</key>
                 <string>AI Helper</string>
             </dict>
@@ -25,7 +25,7 @@
         <key>Extension Description</key>
         <string>Translate text with AI Helper.</string>
         <key>Extension Identifier</key>
-        <string>xyz.yetone.apps.openai-translator.clip-extensions.popclip</string>
+        <string>xyz.t880216t.apps.openai-translator.clip-extensions.popclip</string>
         <key>Extension Image File</key>
         <string>openai-translator.png</string>
         <key>Extension Name</key>
