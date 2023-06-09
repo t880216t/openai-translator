@@ -29,6 +29,7 @@ export interface IInnerProps {
 export interface IProps extends IInnerProps {
   engine: Styletron
   assistantPrompts?: string[]
+  lastAssistantPrompt?: string
 }
 
 export interface IHistoryList {
@@ -53,11 +54,7 @@ function ChatPage(props: IProps) {
   const [historyList, setHistoryList] = useState<IHistoryList>({})
   const [outPutText, setOutPutText] = useState("")
   const [assistantPrompts, setAssistantPrompts] = useState<string[]>([]);
-  const { themeType } = useTheme()
-
-  useEffect(() => {
-    console.log("assistantPrompts update", assistantPrompts);
-  }, [assistantPrompts])
+  const [lastAssistantPrompt, setLastAssistantPrompt] = useState<string>("");
 
   useEffect(() => {
     setOriginalText(props.text)
@@ -115,6 +112,9 @@ function ChatPage(props: IProps) {
         return updatedPrompts;
       })
     }
+    if (message && !message.isMe && message.text) {
+      setLastAssistantPrompt(message.text||'');
+    }
     if (message?.uuid !== undefined && !historyList.hasOwnProperty(message.uuid) && message.isMe) {
       setHistoryList((prevHistoryList) => ({
         ...(message.uuid
@@ -163,6 +163,7 @@ function ChatPage(props: IProps) {
         setActivitySessionId(uuid)
         setActivitySessionTitle(historyList[uuid].title)
         setCollapsed(true)
+        setLastAssistantPrompt("");
         const questions = Object.values(messageList);
         // @ts-ignore
         questions.forEach((message: IMessage) => {
@@ -180,6 +181,7 @@ function ChatPage(props: IProps) {
   const onDelete = (uuid: string) => {
     const prevMessageList = localStorage.getItem(MESSAGE_LIST_KEY)
     if (prevMessageList) {
+      setLastAssistantPrompt("");
       const messageList = JSON.parse(prevMessageList)
       if (messageList[uuid]) {
         delete messageList[uuid]
@@ -237,7 +239,7 @@ function ChatPage(props: IProps) {
           )}
         </Content>
         <Footer style={{padding: "10px 20px", background: '#ffffff'}}>
-          <Send assistantPrompts={assistantPrompts} uuid={activitySessionId} engine={props?.engine} text={originalText} onMessageResult={onMessageResult} />
+          <Send lastAssistantPrompt={lastAssistantPrompt} assistantPrompts={assistantPrompts} uuid={activitySessionId} engine={props?.engine} text={originalText} onMessageResult={onMessageResult} />
         </Footer>
       </Layout>
     </Layout>

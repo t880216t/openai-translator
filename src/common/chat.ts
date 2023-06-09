@@ -196,6 +196,7 @@ export async function chat(query: any) {
     let commandPrompt = ''
     let contentPrompt = query.text
     let assistantPrompts: string[] = query?.assistantPrompts
+    let lastPrompt: string = query?.lastPrompt
     let quoteProcessor: QuoteProcessor | undefined
     const settings = await utils.getSettings()
     let isWordMode = false
@@ -262,7 +263,6 @@ export async function chat(query: any) {
             parent_message_id: utils.generateUUID(),
         }
     } else {
-        console.log("assistantPrompts", query.assistantPrompts);
         const messages = [
             {
                 role: 'system',
@@ -279,6 +279,12 @@ export async function chat(query: any) {
                 content: commandPrompt,
             },
         ]
+        if (lastPrompt){
+            messages.push({
+                role: 'assistant',
+                content: lastPrompt,
+            })
+        }
         if (contentPrompt) {
             messages.push({
                 role: 'user',

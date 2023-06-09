@@ -30,6 +30,11 @@ function Send(props: IProps) {
   const [helpPrompts, setHelpPrompts] = useState( [])
   const [matchedData, setMatchedData] = useState<Item[]>([]);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [lastPrompt, setLastPrompt] = useState("");
+
+  useEffect(() => {
+    setLastPrompt(props.lastAssistantPrompt || "")
+  }, [props.lastAssistantPrompt])
 
   useEffect(() => {
     console.log("assistantPrompts props update", props.assistantPrompts);
@@ -89,6 +94,7 @@ function Send(props: IProps) {
     await chat({
       text: text,
       assistantPrompts: userPrompts,
+      lastPrompt: lastPrompt,
       onStatusCode: (statusCode: any) => {
         console.log(statusCode);
       },
@@ -108,6 +114,7 @@ function Send(props: IProps) {
         setSubmitLoading(false)
       },
     })
+    setSubmitLoading(false)
   };
 
   const onPressEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
