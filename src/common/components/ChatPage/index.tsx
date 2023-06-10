@@ -45,6 +45,17 @@ const DEFAULT_TITLE = "New Chat";
 const HISTORY_LIST_KEY = "_history_list";
 const MESSAGE_LIST_KEY = "_message_list";
 
+function getItemAsync(key: string) {
+  return new Promise((resolve, reject) => {
+    try {
+      const value = localStorage.getItem(key);
+      resolve(value);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 function ChatPage(props: IProps) {
   const [originalText, setOriginalText] = useState(props.text)
   const [messageList, setMessageList] = useState<{[key: string]: IMessage}>({})
@@ -79,6 +90,7 @@ function ChatPage(props: IProps) {
           [activitySessionId]: messageList
         }))
       }
+      scrollToBottom();
     }
   }, [messageList])
 
@@ -91,11 +103,17 @@ function ChatPage(props: IProps) {
 
   useEffect(() => {
     if (outPutText) {
+      scrollToBottom();
+    }
+  }, [outPutText]);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
       const container = document.querySelector('#messages') as HTMLElement;
       container?.scrollTo({ top: 999999, behavior: 'smooth' });
       container?.parentElement?.scrollTo({ top: 999999, behavior: 'smooth' });
-    }
-  }, [outPutText]);
+    }, 1000);
+  }
 
   const onMessageResult = (message: IMessage) => {
     if (!message.messageId) return
@@ -108,7 +126,14 @@ function ChatPage(props: IProps) {
     if (message && message.isMe && message.text) {
       // @ts-ignore
       setAssistantPrompts((prevAssistantPrompts) => {
-        const updatedPrompts: string[] = [...prevAssistantPrompts, message.text||''];
+        // 只要prevAssistantPrompts的倒数后2条数据，将字符串长度超过100的截取前100个字符，并加上省略号
+        let updatedPrompts: string[] = prevAssistantPrompts.slice(-3).map((prompt) => {
+          if (prompt.length > 100) {
+            return `${prompt.substring(0, 100)}...`;
+          }
+          return prompt;
+        });
+        updatedPrompts = [...updatedPrompts, message.text||''];
         return updatedPrompts;
       })
     }
@@ -150,13 +175,13 @@ function ChatPage(props: IProps) {
     const uuid = uuidv4().replace(/-/g, '')
     setActivitySessionId(uuid)
     setActivitySessionTitle(DEFAULT_TITLE)
-    setMessageList({})
-    setCollapsed(true)
+    clearState()
   }
 
-  const onSelectHistory = (uuid: string) => {
-    const prevMessageList = localStorage.getItem(MESSAGE_LIST_KEY)
+  const onSelectHistory = async (uuid: string) => {
+    const prevMessageList = await getItemAsync(MESSAGE_LIST_KEY)
     if (prevMessageList) {
+      // @ts-ignore
       const messageList = JSON.parse(prevMessageList)[uuid]
       if (messageList) {
         setMessageList(messageList)
@@ -170,12 +195,26 @@ function ChatPage(props: IProps) {
           if (message && message.isMe && message.text) {
             // @ts-ignore
             setAssistantPrompts((prevAssistantPrompts) => {
-              return [...prevAssistantPrompts, message.text];
+              // 将prevAssistantPrompts中字符串长度超过100的截取前100个字符，并加上省略号
+              let updatedPrompts: string[] = prevAssistantPrompts.slice(-3).map((prompt) => {
+                if (prompt.length > 100) {
+                  return `${prompt.substring(0, 100)}...`;
+                }
+                return prompt;
+              });
+              return [...updatedPrompts, message.text||''];
             });
           }
         });
       }
     }
+  }
+
+  const clearState = () => {
+    setMessageList({})
+    setCollapsed(true)
+    setLastAssistantPrompt("");
+    setAssistantPrompts([]);
   }
 
   const onDelete = (uuid: string) => {
@@ -201,7 +240,6 @@ function ChatPage(props: IProps) {
         })
       }
     }
-
   }
 
   return (

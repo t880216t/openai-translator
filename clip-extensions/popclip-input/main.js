@@ -2,53 +2,66 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.actions = void 0;
 const axios_1 = require("axios");
-// the extension keeps the message history in memory
+
+// 在内存中保存消息历史记录
 const messages = [];
-// the last chat date
+
+// 最后一次聊天的日期
 let lastChat = new Date();
-// reset the history
+
+// 重置历史记录
 function reset() {
   print("Resetting chat history");
   messages.length = 0;
   return null;
 }
-// get the content of the last `n` messages from the chat, trimmed and separated by double newlines
+
+// 获取最后n条消息的内容，去除空格并用两个换行符分隔开来。
 function getTranscript(n) {
   return messages.slice(-n).map((m) => m.content.trim()).join("\n\n");
 }
-// the main chat action
+
+// 主要聊天操作
 const chat = async (input, options) => {
+
   const openai = axios_1.default.create({
     baseURL: options.apiBase,
     headers: { Authorization: `Bearer ${options.token}` },
   });
-  // if the last chat was long enough ago, reset the history
+
+  // 如果上次聊天时间太久了，则重置历史记录
   if (options.resetMinutes.length > 0) {
-    const resetInterval = parseInt(options.resetMinutes) * 1000 * 60;
-    if (new Date().getTime() - lastChat.getTime() > resetInterval) {
+    const resetInterval = parseInt(options.resetMinutes) *1000*60;
+    if(new Date().getTime()-lastChat.getTime()>resetInterval){
       reset();
     }
   }
-  // add the new message to the history
+
+  // 将新消息添加到历史记录中
   messages.push({ role: "user", content: input.text });
-  // send the whole message history to OpenAI
-  const { data } = await openai.post("/v1/chat/completions", {
-    model: "gpt-3.5-turbo",
+
+  // 将整个消息历史发送给OpenAI
+  const { data }= await openai.post("/v1/chat/completions",{
+    model:"gpt-3.5-turbo",
     messages,
   });
-  // add the response to the history
+
+  // 将响应添加到历史记录中
   messages.push(data.choices[0].message);
   lastChat = new Date();
-  // if holding shift, copy just the response. else, paste the last input and response.
+
+  // 如果按住Shift键，则只复制响应。否则，粘贴最后一次输入和响应。
   if (popclip.modifiers.shift) {
     popclip.copyText(getTranscript(1));
   }
   else {
     popclip.pasteText(getTranscript(2));
   }
+
   return null;
 };
-// export the actions
+
+// 导出操作
 exports.actions = [{
   title: "自动生成",
   icon: "icon-input.svg",
@@ -56,7 +69,7 @@ exports.actions = [{
 }, {
   title: "清理历史",
   icon: "icon-clear.svg",
-  requirements: ["option-showReset=1"],
-  after: "show-status",
+  requirements:["option-showReset=1"],
+  after:"show-status",
   code: reset,
 }];
