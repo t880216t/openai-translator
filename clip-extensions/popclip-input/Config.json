@@ -1,0 +1,44 @@
+{
+  "name": "AI helper Input",
+  "icon": "icon-openai.svg",
+  "identifier": "com.t880216t.popclip.extension.chatgpt.input",
+  "description": "Send the selected text to ChatGPT and append the response.",
+  "note": "",
+  "app": {
+    "name": "AI helper",
+    "link": "https://openai.com/blog/chatgpt"
+  },
+  "module": "main.js",
+  "entitlements": [
+    "network"
+  ],
+  "options": [
+    {
+      "identifier": "token",
+      "label": "API token",
+      "type": "string",
+      "defaultValue": "sk-xxx",
+      "description": "你的请求token"
+    },
+    {
+      "identifier": "apiBase",
+      "label": "请求基础路径",
+      "type": "string",
+      "defaultValue": "https://api.openai.com",
+      "description": "api请求访问地址，如果有转发可以替换。"
+    },{
+      "identifier:": "resetMinutes",
+      "label": "Reset Timer (minutes)",
+      "type": "string",
+      "description": "定时自动清理历史消息，短时间内会带上历史消息进行生成。",
+      "defaultValue": "15"
+    },
+    {
+      "identifier": "showReset",
+      "label": "Show Reset Button",
+      "type": "boolean",
+      "icon": "icon-clear.svg",
+      "description": "Show a button to reset the conversation."
+    }
+  ]
+}

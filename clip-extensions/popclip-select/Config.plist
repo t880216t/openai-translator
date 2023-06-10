@@ -6,11 +6,11 @@
         <array>
             <dict>
                 <key>Shell Script File</key>
-                <string>openai-translator.sh</string>
+                <string>ai-helper.sh</string>
                 <key>Image File</key>
                 <string>icon.png</string>
                 <key>Title</key>
-                <string>AI Helper</string>
+                <string>划词对话</string>
             </dict>
         </array>
         <key>Credits</key>
@@ -23,13 +23,13 @@
             </dict>
         </array>
         <key>Extension Description</key>
-        <string>Translate text with AI Helper.</string>
+        <string>Send the selected text to AI helper and append the response.</string>
         <key>Extension Identifier</key>
-        <string>xyz.t880216t.apps.openai-translator.clip-extensions.popclip</string>
+        <string>xyz.t880216t.apps.ai-helper.clip-extensions.popclip.select</string>
         <key>Extension Image File</key>
-        <string>openai-translator.png</string>
+        <string>icon.png</string>
         <key>Extension Name</key>
-        <string>AI Helper</string>
+        <string>AI Helper Select</string>
         <key>Required OS Version</key>
         <string>10.13</string>
     </dict>
