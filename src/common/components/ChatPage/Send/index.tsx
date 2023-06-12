@@ -149,7 +149,6 @@ function Send(props: IProps) {
         className="send"
         size="small"
         type={originalText?.trim() === "" ? "default" : "primary"}
-        primary={originalText?.trim() !== ""}
         icon={<SendOutlined />}
         loading={submitLoading}
         onClick={async () => await submit(originalText || "")}

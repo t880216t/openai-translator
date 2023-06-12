@@ -117,6 +117,7 @@ function ChatPage(props: IProps) {
 
   const onMessageResult = (message: IMessage) => {
     if (!message.messageId) return
+    // @ts-ignore
     setMessageList((messageList) => {
       if (messageList[message.messageId]) {
         return {...messageList, [message.messageId]: message}
