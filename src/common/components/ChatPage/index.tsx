@@ -121,7 +121,9 @@ function ChatPage(props: IProps) {
       if (messageList[message.messageId]) {
         return {...messageList, [message.messageId]: message}
       }
-      return {...messageList, [message.messageId]: message}
+      if (message.uuid === activitySessionId){
+        return {...messageList, [message.messageId]: message}
+      }
     })
     if (message && message.isMe && message.text) {
       // @ts-ignore

@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "AI Helper",
-    "version": "0.9.9"
+    "version": "0.1.1"
   },
   "tauri": {
     "allowlist": {
@@ -47,6 +47,7 @@
         "message": true
       }
     },
+    "macOSPrivateApi": true,
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
@@ -110,6 +111,7 @@
         "title": "AI Helper",
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
+        "transparent": true,
         "visible": true
       }
     ],

@@ -75,12 +75,6 @@ function Send(props: IProps) {
     })
   }
 
-  const onMessageResult = (messageId: string ,text: string | undefined) => {
-    if (text){
-      setResult({messageId: messageId, text: text, isMe: false, uuid: props.uuid})
-    }
-  }
-
   const submit = async (text: string) => {
     let message = text.trim();
     if (!message) return;
@@ -107,7 +101,7 @@ function Send(props: IProps) {
         onMessagePrinting(message)
       },
       onFinish: (reason: any) => {
-        onMessageResult(result?.messageId || '', result?.text)
+        console.log("reason", reason);
         setSubmitLoading(false)
       },
       onError: (error: any) => {
@@ -153,7 +147,9 @@ function Send(props: IProps) {
       />
       <Button
         className="send"
-        type="text"
+        size="small"
+        type={originalText?.trim() === "" ? "default" : "primary"}
+        primary={originalText?.trim() !== ""}
         icon={<SendOutlined />}
         loading={submitLoading}
         onClick={async () => await submit(originalText || "")}

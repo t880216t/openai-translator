@@ -3,7 +3,7 @@
     width: 100%;
     flex-direction: row;
     justify-content: space-around;
-    align-items: center;
+    align-items: flex-end;
     border: 1px solid grey;
     border-radius: 3px;
     .input-container{
@@ -17,12 +17,12 @@
         font-size: 12px;
     }
     .send{
-        width: 50px;
-        height: 100%;
+        width: 40px;
         border: none;
         outline: none;
         font-size: 1rem;
         cursor: pointer;
+        margin: 5px;
     }
     .mentions{
         padding: 0 10px;

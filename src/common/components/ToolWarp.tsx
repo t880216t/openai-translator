@@ -3,6 +3,7 @@ import { Button, ConfigProvider, Switch, Tooltip } from "antd";
 import React from 'react';
 import { Translator } from "./Translator";
 import ChatPage from "./ChatPage";
+import Header  from "./Frame/Header";
 
 import { ITranslatorProps } from "./Translator"
 
@@ -25,8 +26,11 @@ function ToolWarp(props: ITranslatorProps) {
       <div style={{
         position: "absolute",
         height: "100%",
-        width: "100%"
+        width: "100%",
+        // paddingTop: 20,
+        // background: "rgb(29, 32, 38)"
       }}>
+        {/*<Header title="翻译" />*/}
         {actionModel && <Translator {...props} />}
         {!actionModel && <ChatPage {...props} />}
         <Tooltip title={"切换使用模式"}>
