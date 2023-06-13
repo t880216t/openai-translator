@@ -91,7 +91,9 @@ function ChatPage(props: IProps) {
           [activitySessionId]: messageList
         }))
       }
-      scrollToBottom();
+      if (onSubmitState === 1){
+        scrollToBottom();
+      }
     }
   }, [messageList])
 
@@ -255,6 +257,15 @@ function ChatPage(props: IProps) {
     setOnSubmitState(submitState)
   }
 
+  const handleDelete = (messageId: string) => {
+    // @ts-ignore
+    setMessageList((prevMessageList) => {
+      const updatedMessageList = { ...prevMessageList };
+      delete updatedMessageList[messageId];
+      return updatedMessageList;
+    });
+  }
+
   return (
     <Layout className="chat-warp">
       <Sider
@@ -282,7 +293,7 @@ function ChatPage(props: IProps) {
         </Header>
         <Content>
           {(Object.keys(messageList).length !== 0 ) ? (
-            <Messages messageList={messageList} submitState={onSubmitState} />
+            <Messages onDelete={handleDelete} messageList={messageList} submitState={onSubmitState} />
           ): (
             <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <Empty  description={"开始你的对话吧"} />

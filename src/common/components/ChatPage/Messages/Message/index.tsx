@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Avatar, Tooltip } from "antd";
-import { CopyOutlined, UserOutlined, NotificationOutlined } from '@ant-design/icons'
+import { CopyOutlined, UserOutlined, NotificationOutlined, DeleteOutlined } from '@ant-design/icons'
 import { CopyButton } from '@mantine/core';
 
 import "./index.scss"
@@ -11,7 +11,11 @@ import { Markdown } from './markdown'
 import { speak } from "../../../../tts";
 import { detectLang, LangCode } from "../../../lang/lang";
 
-function Message(props: IMessage) {
+interface IMessageProps extends IMessage {
+  onDelete?: (messageId: string) => void
+}
+
+function Message(props: IMessageProps) {
   const [content, setContent] = useState(props.text)
   const [isSpeakingText, setIsSpeakingText] = useState(false)
   const [sourceLang, setSourceLang] = useState<LangCode>('en')
@@ -39,6 +43,10 @@ function Message(props: IMessage) {
     stopSpeakRef.current = stopSpeak
   }
 
+  const handleDelete = () => {
+    props.onDelete?.(props.messageId)
+  }
+
   return (
     <div className={`message ${props?.isMe ? "me": "other"}`}>
       <div className={`logo ${props.isMe? "": ""}`}>
@@ -51,11 +59,13 @@ function Message(props: IMessage) {
           <Markdown submitState={props.submitState} content={content || ''} />
         </div>
         <div className="action-wrap">
-          <div>
-            <Tooltip title="播放">
-              <Button onClick={handleEditSpeakAction} type="text" icon={<NotificationOutlined style={{color: '#b3b3ba'}} />} />
-            </Tooltip>
-          </div>
+          {props?.isMe && (
+            <div>
+              <Tooltip title="播放">
+                <Button onClick={handleEditSpeakAction} type="text" icon={<NotificationOutlined style={{color: '#b3b3ba'}} />} />
+              </Tooltip>
+            </div>
+          )}
           <CopyButton value={content || ''}>
             {({ copy, copied }) => (
               <Tooltip title="复制">
@@ -65,7 +75,7 @@ function Message(props: IMessage) {
           </CopyButton>
           <div>
             <Tooltip title="删除">
-              <Button onClick={handleEditSpeakAction} type="text" icon={<NotificationOutlined style={{color: '#b3b3ba'}} />} />
+              <Button onClick={handleDelete} type="text" icon={<DeleteOutlined style={{color: '#b3b3ba'}} />} />
             </Tooltip>
           </div>
         </div>

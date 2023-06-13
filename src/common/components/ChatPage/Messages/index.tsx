@@ -6,12 +6,13 @@ import { IMessage } from "../../../types";
 
 import "./index.scss"
 
-export interface IMessageProps {
+export interface IMessagesProps {
   messageList: {[key: string]: IMessage}
   submitState: number
+  onDelete?: (messageId: string) => void
 }
 
-function Messages(props: IMessageProps) {
+function Messages(props: IMessagesProps) {
   const [list, setList] = useState(props.messageList)
 
   useEffect(() => {
@@ -21,7 +22,7 @@ function Messages(props: IMessageProps) {
   return (
     <div className="message-wrap" id="messages">
       {list && Object.keys(list).map((key) => {
-        return <Message submitState={props.submitState} key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
+        return <Message onDelete={(messageId) => props?.onDelete(messageId)} submitState={props.submitState} key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
       })}
     </div>
   );

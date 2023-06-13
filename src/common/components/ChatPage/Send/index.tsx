@@ -154,7 +154,7 @@ function Send(props: ISendProps) {
         className="send"
         size="small"
         type={originalText?.trim() === "" ? "default" : "primary"}
-        icon={<SendOutlined />}
+        icon={<SendOutlined style={submitLoading ? {color: "#3742fa", fontWeight: "bold", fontSize: 16}: undefined} />}
         loading={submitLoading}
         onClick={async () => await submit(originalText || "")}
       />

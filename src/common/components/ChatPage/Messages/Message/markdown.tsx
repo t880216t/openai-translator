@@ -20,6 +20,10 @@ interface MermaidComponentProps {
   submitState?: number
 }
 
+function removePunctuation(text) {
+  return text.replace(/[^\w\s]|_/g, "");
+}
+
 const MermaidComponent: React.FC<MermaidComponentProps> = ({ chart, content , submitState}) => {
   React.useEffect(() => {
     mermaid.initialize({
@@ -119,7 +123,8 @@ export function Markdown(_props: MarkdownProps) {
             const match = /language-(\w+)/.exec(className || '')
             const code = String(children);
             if (match?.[1] === "mermaid") {
-              return <MermaidComponent submitState={_props.submitState} chart={React.Children.toArray(code).join('') || ''} content={React.Children.toArray(children).join('') || ''} />;
+              const new_code = React.Children.toArray(code).join('').replace("、","_") .replace("，","_") || '';
+              return <MermaidComponent submitState={_props.submitState} chart={new_code} content={React.Children.toArray(children).join('') || ''} />;
             }
             return !inline ? (<>
               <Code>
