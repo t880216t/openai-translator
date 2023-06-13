@@ -64,6 +64,7 @@ function ChatPage(props: IProps) {
   const [activitySessionTitle, setActivitySessionTitle] = useState(DEFAULT_TITLE);
   const [historyList, setHistoryList] = useState<IHistoryList>({})
   const [outPutText, setOutPutText] = useState("")
+  const [onSubmitState, setOnSubmitState] = useState(3)
   const [assistantPrompts, setAssistantPrompts] = useState<string[]>([]);
   const [lastAssistantPrompt, setLastAssistantPrompt] = useState<string>("");
 
@@ -106,6 +107,10 @@ function ChatPage(props: IProps) {
       scrollToBottom();
     }
   }, [outPutText]);
+
+  useEffect(() => {
+    setOnSubmitState(onSubmitState)
+  }, [onSubmitState]);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -245,6 +250,11 @@ function ChatPage(props: IProps) {
     }
   }
 
+  //@ts-ignore
+  const onSubmitActionDone = (submitState: number) => {
+    setOnSubmitState(submitState)
+  }
+
   return (
     <Layout className="chat-warp">
       <Sider
@@ -272,7 +282,7 @@ function ChatPage(props: IProps) {
         </Header>
         <Content>
           {(Object.keys(messageList).length !== 0 ) ? (
-            <Messages messageList={messageList} />
+            <Messages messageList={messageList} submitState={onSubmitState} />
           ): (
             <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <Empty  description={"开始你的对话吧"} />
@@ -280,7 +290,7 @@ function ChatPage(props: IProps) {
           )}
         </Content>
         <Footer style={{padding: "10px 20px", background: '#ffffff'}}>
-          <Send lastAssistantPrompt={lastAssistantPrompt} assistantPrompts={assistantPrompts} uuid={activitySessionId} engine={props?.engine} text={originalText} onMessageResult={onMessageResult} />
+          <Send onSubmitActionDone={onSubmitActionDone} lastAssistantPrompt={lastAssistantPrompt} assistantPrompts={assistantPrompts} uuid={activitySessionId} engine={props?.engine} text={originalText} onMessageResult={onMessageResult} />
         </Footer>
       </Layout>
     </Layout>

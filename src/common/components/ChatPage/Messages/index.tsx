@@ -8,6 +8,7 @@ import "./index.scss"
 
 export interface IMessageProps {
   messageList: {[key: string]: IMessage}
+  submitState: number
 }
 
 function Messages(props: IMessageProps) {
@@ -20,7 +21,7 @@ function Messages(props: IMessageProps) {
   return (
     <div className="message-wrap" id="messages">
       {list && Object.keys(list).map((key) => {
-        return <Message key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
+        return <Message submitState={props.submitState} key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
       })}
     </div>
   );

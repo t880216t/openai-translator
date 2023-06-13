@@ -21,9 +21,11 @@ interface Item {
   label: string;
 }
 
-const { TextArea } = Input;
+interface ISendProps extends IProps{
+  onSubmitActionDone?: (submitState: number) => void
+}
 
-function Send(props: IProps) {
+function Send(props: ISendProps) {
   const [originalText, setOriginalText] = useState(props.text)
   const [result, setResult] = useState<IMessage | null>(null);
   const [userPrompts, setUserPrompts] = useState<string[]>(props.assistantPrompts || [])
@@ -82,6 +84,7 @@ function Send(props: IProps) {
     setResult(null)
     setOriginalText("")
     setSubmitLoading(true)
+    props?.onSubmitActionDone?.(1)
 
     const controller = new AbortController()
     const { signal } = controller
@@ -103,9 +106,11 @@ function Send(props: IProps) {
       onFinish: (reason: any) => {
         console.log("reason", reason);
         setSubmitLoading(false)
+        props?.onSubmitActionDone?.(3)
       },
       onError: (error: any) => {
         setSubmitLoading(false)
+        props?.onSubmitActionDone?.(3)
       },
     })
     setSubmitLoading(false)

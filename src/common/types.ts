@@ -77,5 +77,6 @@ export interface IMessage {
     text?: string,
     isMe?: boolean,
     uuid?: string,
+    submitState?: number,
     createAt?: number,
 }

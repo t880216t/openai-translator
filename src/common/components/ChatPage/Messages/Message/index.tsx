@@ -24,7 +24,6 @@ function Message(props: IMessage) {
 
   const handleEditSpeakAction = async () => {
     const sourceLang_ = await detectLang(content)
-    console.log("sourceLang_", sourceLang_ );
     setSourceLang(sourceLang_)
     if (isSpeakingText) {
       stopSpeakRef.current()
@@ -49,7 +48,7 @@ function Message(props: IMessage) {
       </div>
       <div className="content-wrap">
         <div className="content">
-          <Markdown content={content || ''} />
+          <Markdown submitState={props.submitState} content={content || ''} />
         </div>
         <div className="action-wrap">
           <div>
@@ -64,6 +63,11 @@ function Message(props: IMessage) {
               </Tooltip>
             )}
           </CopyButton>
+          <div>
+            <Tooltip title="删除">
+              <Button onClick={handleEditSpeakAction} type="text" icon={<NotificationOutlined style={{color: '#b3b3ba'}} />} />
+            </Tooltip>
+          </div>
         </div>
       </div>
     </div>

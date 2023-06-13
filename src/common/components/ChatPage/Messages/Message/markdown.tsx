@@ -17,9 +17,10 @@ import './index.scss'
 interface MermaidComponentProps {
   chart: string;
   content: string;
+  submitState?: number
 }
 
-const MermaidComponent: React.FC<MermaidComponentProps> = ({ chart, content }) => {
+const MermaidComponent: React.FC<MermaidComponentProps> = ({ chart, content , submitState}) => {
   React.useEffect(() => {
     mermaid.initialize({
       startOnLoad: true
@@ -30,12 +31,16 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ chart, content }) =
     mermaid.contentLoaded();
   }, [chart]);
 
+  React.useEffect(() => {
+    mermaid.contentLoaded();
+  }, [submitState]);
+
   return (
     <div style={{ width: '78vw', overflowX: 'auto'}}>
       <div className="mermaid-content">
         {content}
       </div>
-      <div className="mermaid">{chart}</div>
+      {submitState === 3 && <div className="mermaid">{chart}</div>}
     </div>
   );
 };
@@ -84,19 +89,20 @@ const ImagePreview = styled.div`
 export interface MarkdownProps {
   content: string;
   className?: string;
+  submitState?: number;
 }
 
-export function Markdown(props: MarkdownProps) {
+export function Markdown(_props: MarkdownProps) {
 
   const classes = useMemo(() => {
     const classes = ['prose', 'dark:prose-invert'];
 
-    if (props.className) {
-      classes.push(props.className);
+    if (_props.className) {
+      classes.push(_props.className);
     }
 
     return classes;
-  }, [props.className])
+  }, [_props.className])
 
   const elem = useMemo(() => (
     <div className={classes.join(' ')}>
@@ -113,7 +119,7 @@ export function Markdown(props: MarkdownProps) {
             const match = /language-(\w+)/.exec(className || '')
             const code = String(children);
             if (match?.[1] === "mermaid") {
-              return <MermaidComponent chart={React.Children.toArray(code).join('') || ''} content={React.Children.toArray(children).join('') || ''} />;
+              return <MermaidComponent submitState={_props.submitState} chart={React.Children.toArray(code).join('') || ''} content={React.Children.toArray(children).join('') || ''} />;
             }
             return !inline ? (<>
               <Code>
@@ -160,9 +166,9 @@ export function Markdown(props: MarkdownProps) {
               </code>
             )
           }
-        }}>{props.content}</ReactMarkdown>
+        }}>{_props.content}</ReactMarkdown>
     </div>
-  ), [props.content, classes]);
+  ), [_props.content, classes]);
 
   return elem;
 }
