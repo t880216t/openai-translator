@@ -4,50 +4,16 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math'
+import remarkBreaks from 'remark-breaks';
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug';
 import rehypeRaw from 'rehype-raw';
 import { Button, CopyButton } from '@mantine/core';
-import mermaid from 'mermaid';
 import 'github-markdown-css';
 import React, { useMemo } from 'react';
+import MermaidComponent from './MermaidBlock'
 
 import './index.scss'
-
-interface MermaidComponentProps {
-  chart: string;
-  content: string;
-  submitState?: number
-}
-
-function removePunctuation(text) {
-  return text.replace(/[^\w\s]|_/g, "");
-}
-
-const MermaidComponent: React.FC<MermaidComponentProps> = ({ chart, content , submitState}) => {
-  React.useEffect(() => {
-    mermaid.initialize({
-      startOnLoad: true
-    });
-  }, []);
-
-  React.useEffect(() => {
-    mermaid.contentLoaded();
-  }, [chart]);
-
-  React.useEffect(() => {
-    mermaid.contentLoaded();
-  }, [submitState]);
-
-  return (
-    <div style={{ width: '78vw', overflowX: 'auto'}}>
-      <div className="mermaid-content">
-        {content}
-      </div>
-      {submitState === 3 && <div className="mermaid">{chart}</div>}
-    </div>
-  );
-};
 
 const Code = styled.div`
     padding: 0;
@@ -111,7 +77,7 @@ export function Markdown(_props: MarkdownProps) {
   const elem = useMemo(() => (
     <div className={classes.join(' ')}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
+        remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]}
         rehypePlugins={[rehypeKatex, rehypeSlug, rehypeRaw]}
         components={{
           ol({ start, children }) {
@@ -123,8 +89,7 @@ export function Markdown(_props: MarkdownProps) {
             const match = /language-(\w+)/.exec(className || '')
             const code = String(children);
             if (match?.[1] === "mermaid") {
-              const new_code = React.Children.toArray(code).join('').replace("、","_") .replace("，","_") || '';
-              return <MermaidComponent submitState={_props.submitState} chart={new_code} content={React.Children.toArray(children).join('') || ''} />;
+              return <MermaidComponent submitState={_props.submitState} code={code} content={React.Children.toArray(children).join('') || ''} />;
             }
             return !inline ? (<>
               <Code>

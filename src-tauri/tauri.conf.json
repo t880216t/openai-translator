@@ -37,10 +37,19 @@
       },
       "fs": {
         "all": false,
-        "scope": ["**", "$CONFIG/*/**"],
-        "writeFile": true,
+        "scope": ["**", "$CONFIG/*/**", "$APPDATA/databases/*"],
         "readFile": true,
-        "readDir": true
+        "writeFile": true,
+        "readDir": true,
+        "copyFile": true,
+        "createDir": true,
+        "removeDir": true,
+        "removeFile": true,
+        "renameFile": true,
+        "exists": true
+      },
+      "path": {
+        "all": true
       },
       "dialog": {
         "all": false,

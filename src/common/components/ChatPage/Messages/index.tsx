@@ -9,7 +9,7 @@ import "./index.scss"
 export interface IMessagesProps {
   messageList: {[key: string]: IMessage}
   submitState: number
-  onDelete?: (messageId: string) => void
+  onDelete: (messageId: string) => void
 }
 
 function Messages(props: IMessagesProps) {
@@ -22,7 +22,7 @@ function Messages(props: IMessagesProps) {
   return (
     <div className="message-wrap" id="messages">
       {list && Object.keys(list).map((key) => {
-        return <Message onDelete={(messageId) => props?.onDelete(messageId)} submitState={props.submitState} key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
+        return <Message onDelete={(messageId) => props.onDelete(messageId)} submitState={props.submitState} key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
       })}
     </div>
   );

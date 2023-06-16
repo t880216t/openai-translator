@@ -67,7 +67,7 @@ function Message(props: IMessageProps) {
             </div>
           )}
           <CopyButton value={content || ''}>
-            {({ copy, copied }) => (
+            {({ copy }) => (
               <Tooltip title="复制">
                 <Button onClick={copy} type="text" icon={<CopyOutlined style={{color: '#b3b3ba'}} />} />
               </Tooltip>
