@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Tabs, Button } from 'antd';
 import type { TabsProps } from 'antd';
 import { SettingOutlined } from '@ant-design/icons'
@@ -14,10 +14,26 @@ interface IBaseProps extends IInnerProps{
 
 function BaseComponent(props: IBaseProps) {
   const [activeKey, setActiveKey] = useState("chat");
-  const { theme, themeType } = useTheme()
+  const { theme } = useTheme()
 
-  const onChange = (key: string) => {
-    setActiveKey(key)
+  useEffect(() => {
+    // 从localstorage中获取actionModel
+    const actionModel = localStorage.getItem("_actionModel");
+    if (actionModel) {
+      try{
+        const actionModelObj = JSON.parse(actionModel);
+        if (actionModelObj?.actionModel){
+          setActiveKey(actionModelObj?.actionModel);
+        }
+      }catch (e) {
+        console.log(e)
+      }
+    }
+  }, []);
+
+  const handleActionModelChange = (value: boolean) => {
+    setActiveKey(value);
+    localStorage.setItem("_actionModel", JSON.stringify({actionModel: value}));
   };
 
   const items: TabsProps['items'] = [
@@ -43,7 +59,7 @@ function BaseComponent(props: IBaseProps) {
       <div className="footer" style={{background: theme.colors.backgroundSecondary}}>
         <Tabs
           size="small"
-          onChange={onChange}
+          onChange={handleActionModelChange}
           tabPosition="bottom"
           items={items}
           activeKey={activeKey}

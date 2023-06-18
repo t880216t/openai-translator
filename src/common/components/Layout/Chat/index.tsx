@@ -18,6 +18,7 @@ import "./index.scss"
 const { Header, Footer, Content } = Layout;
 
 interface IChatProps {
+  text?: string
   theme?: useCurrentThemeType
 }
 
@@ -197,6 +198,7 @@ function ChatHomeComponent(props: IChatProps) {
         </Content>
         <Footer style={{padding: "10px 20px 0 20px", background: props?.theme.colors.backgroundSecondary}}>
           <Send
+            text={props?.text || ''}
             theme={props?.theme}
             onSendMessage={(prompt: string) => handleSendMessage(prompt)}
             onSubmitting={onSubmitting}

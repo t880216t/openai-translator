@@ -15,6 +15,7 @@ interface ISendProps{
   theme?: useCurrentThemeType;
   onSendMessage: (prompt: string) => void;
   onSubmitting: boolean;
+  text?: string
 }
 
 function Send(props: ISendProps) {

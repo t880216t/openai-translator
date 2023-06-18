@@ -11,26 +11,7 @@ import { useTheme } from "../hooks/useTheme";
 
 
 function ToolWarp(props: ITranslatorProps) {
-  const [actionModel, setActionModel] = useState(false);
-  const { theme, themeType } = useTheme()
-
-  useEffect(() => {
-    // 从localstorage中获取actionModel
-    const actionModel = localStorage.getItem("_actionModel");
-    if (actionModel) {
-      try{
-        const actionModelObj = JSON.parse(actionModel);
-        setActionModel(actionModelObj?.actionModel);
-      }catch (e) {
-        console.log(e)
-      }
-    }
-  }, []);
-
-  const handleActionModelChange = (value: boolean) => {
-    setActionModel(value);
-    localStorage.setItem("_actionModel", JSON.stringify({actionModel: value}));
-  };
+  const { theme } = useTheme()
 
   return (
     <ConfigProvider
