@@ -24,16 +24,23 @@ function ChatHomeComponent(props: IChatProps) {
   const [onSubmitting, setOnSubmitting] = useState(false);
 
   useEffect(() => {
-    console.log("activityHistoryId", activityHistoryId);
+    // console.log("activityHistoryId", activityHistoryId);
   }, [activityHistoryId])
 
   useEffect(() => {
-    console.log("messageList", messageList);
+    // console.log("messageList", messageList);
   }, [messageList])
 
   const handleSaveHistory = () => {
     historyService.create({name: "test"})
     notice.success('保存成功')
+  }
+
+  // 消息列表事件
+  const handleDeleteMessage = (messageId: string) => {
+    const newMessageList = {...messageList}
+    delete newMessageList[messageId]
+    setMessageList(newMessageList)
   }
 
   // 发送消息
@@ -99,10 +106,14 @@ function ChatHomeComponent(props: IChatProps) {
           <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <Empty image={null} description="开始会话吧" />
           </div>
-        ) : <_Content messageList={messageList} />}
+        ) : <_Content onSubmitting={onSubmitting} messageList={messageList} onDelete={handleDeleteMessage} />}
       </Content>
       <Footer style={{padding: "10px 20px 0 20px", background: props?.theme.colors.backgroundSecondary}}>
-        <Send theme={props?.theme} onSendMessage={(prompt: string) => handleSendMessage(prompt)} onSubmitting={onSubmitting} />
+        <Send
+          theme={props?.theme}
+          onSendMessage={(prompt: string) => handleSendMessage(prompt)}
+          onSubmitting={onSubmitting}
+        />
       </Footer>
     </Layout>
   );

@@ -5,15 +5,6 @@ import { useCurrentThemeType } from "../../../../hooks/useCurrentThemeType";
 
 import './index.scss'
 
-
-interface RMessage {
-  messageId: string
-  content: string
-  isFullText: boolean
-  uuid: string
-  role?: string
-}
-
 interface Item {
   key: string;
   value: string;
@@ -22,38 +13,18 @@ interface Item {
 
 interface ISendProps{
   theme?: useCurrentThemeType;
-  onSubmitActionDone?: (submitState: number) => void;
   onSendMessage: (prompt: string) => void;
   onSubmitting: boolean;
 }
 
 function Send(props: ISendProps) {
   const [originalText, setOriginalText] = useState(props.text)
-  const [result, setResult] = useState<IMessage | null>(null);
-  const [userPrompts, setUserPrompts] = useState<string[]>(props.assistantPrompts || [])
   const [helpPrompts, setHelpPrompts] = useState( [])
   const [matchedData, setMatchedData] = useState<Item[]>([]);
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [lastPrompt, setLastPrompt] = useState("");
-
-  useEffect(() => {
-    setLastPrompt(props.lastAssistantPrompt || "")
-  }, [props.lastAssistantPrompt])
-
-  useEffect(() => {
-    console.log("assistantPrompts props update", props.assistantPrompts);
-    setUserPrompts(props.assistantPrompts || [])
-  }, [props.assistantPrompts])
 
   useEffect(() => {
     setOriginalText(props.text)
   }, [props.text])
-
-  useEffect(() => {
-    if (result?.messageId && result?.text) {
-      props.onMessageResult?.(result);
-    }
-  }, [result]);
 
   useEffect(() => {
     fetch('http://42.192.93.252:9000/prompt/prompts_zh.json')
@@ -67,55 +38,6 @@ function Send(props: ISendProps) {
   const onInputChange = (value: string) => {
     const regx = new RegExp("/image\\$\\s*([^\\s]+)");
     setOriginalText(value.replace(regx, "/image"));
-  };
-
-  const onMessagePrinting = (message: RMessage) => {
-    setResult((record) => {
-      const oldText = record?.text || ''
-      if (message.isFullText) {
-          return {messageId: message.messageId, text: message.content, isMe: false, uuid: props.uuid}
-      }
-      return  {messageId: message.messageId, text: oldText + message.content, isMe: false, uuid: props.uuid}
-    })
-  }
-
-  const submit = async (text: string) => {
-    let message = text.trim();
-    if (!message) return;
-    props.onMessageResult && props.onMessageResult({messageId: new Date().getTime().toString(),text: text, isMe: true, uuid: props.uuid, createAt: new Date().getTime()})
-    setResult(null)
-    setOriginalText("")
-    setSubmitLoading(true)
-    props?.onSubmitActionDone?.(1)
-
-    const controller = new AbortController()
-    const { signal } = controller
-    await chat({
-      text: text,
-      assistantPrompts: userPrompts,
-      lastPrompt: lastPrompt,
-      onStatusCode: (statusCode: any) => {
-        console.log(statusCode);
-      },
-      signal,
-      onMessage: (message: { role: any }) => {
-        if (message.role) {
-            return
-        }
-        // @ts-ignore
-        onMessagePrinting(message)
-      },
-      onFinish: (reason: any) => {
-        console.log("reason", reason);
-        setSubmitLoading(false)
-        props?.onSubmitActionDone?.(3)
-      },
-      onError: (error: any) => {
-        setSubmitLoading(false)
-        props?.onSubmitActionDone?.(3)
-      },
-    })
-    setSubmitLoading(false)
   };
 
   const onPressEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

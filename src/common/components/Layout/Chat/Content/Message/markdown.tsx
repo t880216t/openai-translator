@@ -89,7 +89,11 @@ export function Markdown(_props: MarkdownProps) {
             const match = /language-(\w+)/.exec(className || '')
             const code = String(children);
             if (match?.[1] === "mermaid") {
-              return <MermaidComponent submitState={_props.submitState} code={code} content={React.Children.toArray(children).join('') || ''} />;
+              return <MermaidComponent
+                submitState={_props.submitState}
+                code={code}
+                content={React.Children.toArray(children).join('') || ''}
+              />;
             }
             return !inline ? (<>
               <Code>

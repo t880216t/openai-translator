@@ -26,7 +26,7 @@ mermaidAPI.initialize({
   }
 });
 
-const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content }) => {
+const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, submitState }) => {
   const dom = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState('');
   const [errorSvgCode, setErrorSvgCode] = useState('');
@@ -123,10 +123,12 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content }) =>
   return (
     <div style={{ width: '78vw', overflowX: 'auto', position: "relative"}}>
       <div ref={dom} dangerouslySetInnerHTML={{ __html: svg }} />
-      <div style={{position: "absolute", top: 10, right: 10}} >
-        <Tooltip placement="left" title={"下载图片"}>
-          <Button onClick={onclickExport} type={"text"} icon={<DownloadOutlined style={{fontSize: 18}}/>} />
-        </Tooltip>
+      <div style={{position: "absolute", top: 0, right: 0}} >
+        {!submitState && (
+          <Tooltip placement="left" title={"下载图片"}>
+            <Button onClick={onclickExport} type={"text"} icon={<DownloadOutlined style={{fontSize: 18}}/>} />
+          </Tooltip>
+        )}
       </div>
       <div className="mermaid-content">
         {content}

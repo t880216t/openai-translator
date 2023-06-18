@@ -21,7 +21,7 @@
   }
   .content-wrap{
     display: flex;
-    flex: 8;
+    flex: 10;
     flex-direction: column;
     .content{
       padding: 0 .1rem;
@@ -39,12 +39,10 @@
 }
 .me{
   padding: 1rem;
-  background: #ffffff;
 }
 .other{
   padding: 1rem;
   --tw-bg-opacity: 1;
-  background-color: rgba(247,247,248,var(--tw-bg-opacity));
 }
 
 .mermaid-content{

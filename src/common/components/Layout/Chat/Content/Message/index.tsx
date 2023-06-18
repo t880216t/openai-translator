@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Avatar, Tooltip } from "antd";
 import { CopyOutlined, UserOutlined, DeleteOutlined } from '@ant-design/icons'
 import { CopyButton } from '@mantine/core';
+import { useTheme } from "../../../../../hooks/useTheme";
 
 // @ts-ignore
 import ChatGPTLogo from './ChatGPT_logo.svg';
@@ -18,16 +19,23 @@ interface IMessageProps extends IMessage {
 }
 
 function Message(props: IMessageProps) {
+  const { theme, themeType } = useTheme()
 
   const handleDelete = () => {
     props.onDelete?.(props.messageId)
   }
 
   return (
-    <div className={`message ${props?.isMe ? "me": "other"}`}>
+    <div
+      className={`message ${props?.isMe ? "me": "other"}`}
+      style={{
+        color: theme.colors.contentSecondary,
+        background: props?.isMe ? theme.colors.backgroundSecondary: theme.colors.backgroundPrimary
+      }}
+    >
       <div className={`logo ${props.isMe? "": ""}`}>
-        {props?.isMe ? <Avatar size={36} shape="square"  style={{background: '#be2edd'}} icon={<UserOutlined />} /> :
-          <Avatar size={36} shape="square" src={<img src={ChatGPTLogo} alt="ChatGPT Logo" />} />
+        {props?.isMe ? <Avatar size={28} shape="square"  style={{background: '#be2edd'}} icon={<UserOutlined />} /> :
+          <Avatar size={28} shape="square" src={<img src={ChatGPTLogo} alt="ChatGPT Logo" />} />
         }
       </div>
       <div className="content-wrap">
