@@ -25,15 +25,38 @@ export interface Action {
     createdAt: string
 }
 
+export interface History {
+    id?: number
+    idx: number
+    name: string
+    description?: string
+    status: 0 | 1 | 2 // 0: pending, 1: success, 2: failed
+    updatedAt: string
+    createdAt: string
+}
+
+export interface Message {
+    id?: number
+    history_id: string
+    content: string
+    role: 0 | 1 // 0: user, 1: bot
+    updatedAt: string
+    createdAt: string
+}
+
 export class LocalDB extends Dexie {
     vocabulary!: Table<VocabularyItem>
     action!: Table<Action>
+    history!: Table<History>
+    message!: Table<Message>
 
     constructor() {
         super('openai-translator')
-        this.version(4).stores({
+        this.version(5).stores({
             vocabulary: 'word, reviewCount, description, updatedAt, createdAt',
             action: '++id, idx, mode, name, icon, rolePrompt, commandPrompt, outputRenderingFormat, updatedAt, createdAt',
+            history: '++id, name, description, status, updatedAt, createdAt',
+            message: '++id, history_id, content, role, updatedAt, createdAt',
         })
     }
 }

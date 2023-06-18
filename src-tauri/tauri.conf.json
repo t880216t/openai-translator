@@ -112,10 +112,8 @@
       {
         "url": "src/tauri/index.html",
         "fullscreen": false,
-        "width": 620,
-        "height": 700,
-        "minWidth": 540,
-        "minHeight": 600,
+        "width": 390,
+        "height": 844,
         "resizable": true,
         "title": "AI Helper",
         "titleBarStyle": "Overlay",

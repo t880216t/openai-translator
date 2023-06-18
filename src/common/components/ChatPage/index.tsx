@@ -288,9 +288,9 @@ function ChatPage(props: IProps) {
         <HistoryList historyList={historyList} onSelect={onSelectHistory} onDelete={onDelete} />
       </Sider>
       <Layout>
-        <Header style={{paddingInline: 10}}>
-          <ChatHeader activitySessionTitle={activitySessionTitle} collapsed={collapsed} onCollapse={onCollapse} onCreate={onCreate} />
-        </Header>
+        {/*<Header style={{paddingInline: 10}}>*/}
+        {/*  <ChatHeader activitySessionTitle={activitySessionTitle} collapsed={collapsed} onCollapse={onCollapse} onCreate={onCreate} />*/}
+        {/*</Header>*/}
         <Content>
           {(Object.keys(messageList).length !== 0 ) ? (
             <Messages onDelete={handleDelete} messageList={messageList} submitState={onSubmitState} />

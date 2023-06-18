@@ -1,0 +1,38 @@
+.input-wrap{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-end;
+    border: 1px solid grey;
+    border-radius: 3px;
+    .input-container{
+      width: 105%;
+      overflow-x: hidden;
+    }
+    .input{
+        width: 105%;
+        height: 100%;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+    .send{
+        width: 40px;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        cursor: pointer;
+        margin: 5px;
+        box-shadow: none;
+    }
+    .mentions{
+        padding: 0 10px;
+        font-size: 12px;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        ::placeholder{
+            color: #6e7681;
+        }
+    }
+}

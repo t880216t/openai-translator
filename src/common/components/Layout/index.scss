@@ -1,0 +1,16 @@
+.container{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+.footer{
+  position: sticky;
+  bottom: 0;
+  padding: 0 10px 10px 10px;
+}
+
+.content{
+  flex: 1; /* 设置内容区域自动扩展剩余空间 */
+  overflow-y: auto; /* 当内容超出容器高度时显示滚动条 */
+}

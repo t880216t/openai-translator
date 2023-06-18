@@ -4,6 +4,8 @@ import { BackgroundEventNames } from '../../common/background/eventnames'
 import { BackgroundFetchRequestMessage, BackgroundFetchResponseMessage } from '../../common/background/fetch'
 import { vocabularyInternalService } from '../../common/internal-services/vocabulary'
 import { actionInternalService } from '../../common/internal-services/action'
+import { historyInternalService } from '../../common/internal-services/history'
+import { messageInternalService } from "../../common/internal-services/message";
 
 browser.contextMenus.create(
     {
@@ -126,6 +128,10 @@ browser.runtime.onMessage.addListener(async (request) => {
             return await callMethod(request, vocabularyInternalService)
         case BackgroundEventNames.actionService:
             return await callMethod(request, actionInternalService)
+        case BackgroundEventNames.historyService:
+            return await callMethod(request, historyInternalService)
+        case BackgroundEventNames.messageService:
+            return await callMethod(request, messageInternalService)
     }
 })
 
