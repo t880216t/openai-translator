@@ -14,7 +14,6 @@ export interface IListMessageOption {
 
 export interface IMessageInternalService {
     create(opt: ICreateMessageOption): Promise<Message>
-    list(opt: IListMessageOption): Promise<Message[]>
     get(id: number): Promise<Message | undefined>
     delete(id: number): Promise<void>
     deleteByHistoryId(id: number): Promise<void>
@@ -43,25 +42,16 @@ class MessageInternalService implements IMessageInternalService {
         return this.db.transaction('rw', this.db.message, async () => {
             const now = new Date().valueOf().toString()
             const message: Message = {
-                history_id: opt.history_id,
+                history_id: Number(opt.history_id as unknown),
                 message_id: opt.message_id,
                 content: opt.content,
                 role: opt.role,
-                createdAt: opt.createdAt,
+                createdAt: Number(opt.createdAt as unknown),
                 add_time: now,
             }
             const id = await this.db.message.add(message)
             message.id = id as number
             return message
-        })
-    }
-
-    async list(opt: IListMessageOption): Promise<Message[]> {
-        return this.db.transaction('rw', this.db.message, async () => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const messages = await (this.db.message.where('history_id').equals(opt.history_id) as any).desc().toArray()
-
-            return messages
         })
     }
 
@@ -91,6 +81,7 @@ class MessageInternalService implements IMessageInternalService {
         }
         const ids = messages.map((message) => message.id)
         return this.db.transaction('rw', this.db.message, async () => {
+            // @ts-ignore
             return await this.db.message.bulkDelete(ids)
         })
     }

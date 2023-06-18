@@ -5,10 +5,10 @@ import {
 import { Button, Card, Empty, message, Space, Tooltip } from "antd";
 
 import "./index.scss"
-import { useCurrentThemeType } from "../../../../../hooks/useCurrentThemeType";
+import { Theme } from "baseui-sd/theme";
 
 interface IHistoryModalProps {
-  theme?: useCurrentThemeType
+  theme?: Theme
   historyList: any[];
   showModal: boolean;
   onOpenChange: (open: boolean) => void;
@@ -16,7 +16,7 @@ interface IHistoryModalProps {
   onLoadHistory: (historyId: number) => void;
 }
 
-function convertTimestampToString(timestamp) {
+function convertTimestampToString(timestamp: string) {
   const timestampNum = parseInt(timestamp);
   const date = new Date(timestampNum);
   const year = date.getFullYear();
@@ -46,7 +46,7 @@ export default (props: IHistoryModalProps) => {
           <div className="history-list-wrap">
             {props?.historyList.map((item, index) => {
               // 13位时间戳字符串转换为时间字符串
-              const timeString = convertTimestampToString(item.createdAt);
+              const timeString = convertTimestampToString(item.createdAt||"");
               return (
                 <Card size="small" style={{marginBottom: 10}}>
                   <div className="history-card-create-time">

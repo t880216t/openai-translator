@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {SendOutlined} from '@ant-design/icons'
 import { Button, Mentions } from 'antd';
-import { useCurrentThemeType } from "../../../../hooks/useCurrentThemeType";
+import { Theme } from "baseui-sd/theme";
 
 import './index.scss'
 
@@ -12,7 +12,7 @@ interface Item {
 }
 
 interface ISendProps{
-  theme?: useCurrentThemeType;
+  theme?: Theme;
   onSendMessage: (prompt: string) => void;
   onSubmitting: boolean;
   text?: string
@@ -75,8 +75,8 @@ function Send(props: ISendProps) {
         style={{
           border: 'none',
           boxShadow: 'none',
-          background: props.theme.colors.backgroundSecondary,
-          color: props.theme.colors.contentPrimary,
+          background: props.theme?.colors.backgroundSecondary,
+          color: props.theme?.colors.contentPrimary,
         }}
         onSearch={onSearch}
         onSelect={(record: any, prefix) => onSelect(record.value, prefix)}
@@ -93,11 +93,11 @@ function Send(props: ISendProps) {
         className="send"
         size="small"
         type={originalText?.trim() === "" ? "default" : "primary"}
-        icon={<SendOutlined style={props.onSubmitting ? {color: props.theme.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />}
+        icon={<SendOutlined style={props.onSubmitting ? {color: props.theme?.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />}
         loading={props.onSubmitting}
         style={{
-          background: originalText?.trim() === "" ? props.theme.colors.backgroundSecondary: props.theme.colors.backgroundInversePrimary,
-          color: originalText?.trim() === "" ? props.theme.colors.contentPrimary: props.theme.colors.contentInversePrimary,
+          background: originalText?.trim() === "" ? props.theme?.colors.backgroundSecondary: props.theme?.colors.backgroundInversePrimary,
+          color: originalText?.trim() === "" ? props.theme?.colors.contentPrimary: props.theme?.colors.contentInversePrimary,
         }}
         onClick={async () => await handleUserPrompt(originalText || "")}
       />

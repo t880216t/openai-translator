@@ -12,7 +12,7 @@ class BackgroundHistoryService implements IHistoryInternalService {
     delete(id: number): Promise<void> {
         return callMethod('historyService', 'delete', [id])
     }
-    list(): Promise<Action[]> {
+    list(): Promise<History[]> {
         return callMethod('historyService', 'list', [])
     }
 }

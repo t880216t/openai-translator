@@ -546,6 +546,7 @@ function APIModelSelector({ provider, value, onChange, onBlur }: APIModelSelecto
         setOptions([])
         if (provider === 'OpenAI') {
             setOptions([
+                { label: 'gpt-3.5-turbo-0613', id: 'gpt-3.5-turbo-0613' },
                 { label: 'gpt-3.5-turbo', id: 'gpt-3.5-turbo' },
                 { label: 'gpt-3.5-turbo-0301', id: 'gpt-3.5-turbo-0301' },
                 { label: 'gpt-4', id: 'gpt-4' },
@@ -1042,10 +1043,10 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
     return (
         <div
             style={{
-                paddingTop: isDesktopApp ? '98px' : undefined,
-                paddingBottom: isDesktopApp ? '32px' : undefined,
+                paddingTop: isDesktopApp ? '28px' : undefined,
+                paddingBottom: isDesktopApp ? '22px' : undefined,
                 background: theme.colors.backgroundPrimary,
-                minWidth: isDesktopApp ? 450 : 400,
+                width: "100%"
             }}
         >
             <nav

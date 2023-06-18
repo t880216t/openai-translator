@@ -5,22 +5,22 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { Button, Form, message } from 'antd';
-import { useCurrentThemeType } from "../../../../../hooks/useCurrentThemeType";
+import { Theme } from "baseui-sd/theme";
 
 
 interface ISaveModalProps {
-  theme?: useCurrentThemeType
+  theme?: Theme
   showModal: boolean;
   onOpenChange: (open: boolean) => void;
   onSaveHistory: (name: string, description: string) => void;
 }
 
 export default (props: ISaveModalProps) => {
-  const [form] = Form.useForm<{ name: string; company: string }>();
+  const [form] = Form.useForm<{ name: string; description: string }>();
   return (
     <ModalForm<{
       name: string;
-      company: string;
+      description: string;
     }>
       title="保存会话"
       open={props.showModal}

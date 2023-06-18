@@ -91,7 +91,7 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
         if (blob) {
           const reader = new FileReader();
           reader.onloadend = () => {
-            const bufferData = reader.result;
+            const bufferData = reader.result as Buffer;
             saveImage(bufferData);
           };
           reader.readAsArrayBuffer(blob);
@@ -105,7 +105,7 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
     };
   }, []);
 
-  const saveImage = async (bufferData) => {
+  const saveImage = async (bufferData: Buffer) => {
     try {
       const file_name = `mermaid_${Date.now()}.png`;
 

@@ -30,19 +30,19 @@ export interface History {
     idx: number
     name: string
     description?: string
-    status: 0 | 1 | 2 // 0: pending, 1: success, 2: failed
+    status: number
     updatedAt: string
     createdAt: string
 }
 
 export interface Message {
     id?: number
-    history_id: string
+    history_id: number
     message_id: string
     content: string
     role: string
-    createdAt: string
-    add_time: string
+    createdAt?: number
+    add_time?: string
 }
 
 export class LocalDB extends Dexie {

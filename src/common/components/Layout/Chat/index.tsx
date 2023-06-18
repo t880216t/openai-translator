@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Button, Empty, message as notice } from "antd";
 import { v4 as uuidv4 } from 'uuid'
+import { Theme } from 'baseui-sd/theme'
 
 import { historyService } from '../../../services/history'
 import { messageService } from '../../../services/message'
 import { useCurrentThemeType } from "../../../hooks/useCurrentThemeType";
-import { IMessage } from "../types"
+import { IMessage, IMessageDBProps, IHistoryDBProps } from "../types"
 import {chat} from '../../../chat'
 
 import Send from './Send'
@@ -19,13 +20,13 @@ const { Header, Footer, Content } = Layout;
 
 interface IChatProps {
   text?: string
-  theme?: useCurrentThemeType
+  theme?: Theme;
 }
 
 function ChatHomeComponent(props: IChatProps) {
   const [messageList, setMessageList] = useState<{[key: string]: any}>({})
   const [currentSessionTitle, setCurrentSessionTitle] = useState('');
-  const [activityHistoryId, setActivityHistoryId] = useState(null);
+  const [activityHistoryId, setActivityHistoryId] = useState<number|null>(null);
   const [abortController] = useState(new AbortController());
   const [onSubmitting, setOnSubmitting] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -45,14 +46,13 @@ function ChatHomeComponent(props: IChatProps) {
   const handleClearMessage = () => {
     setMessageList({})
     setActivityHistoryId(null)
-    setCurrentSessionTitle(null)
+    setCurrentSessionTitle("")
     notice.success('当前会话历史已经清空')
   }
 
   const handleShowHistoryList = async () => {
     setShowHistoryModal(true)
     const historyList = await historyService.list()
-    console.log('historyList', historyList);
     setHistoryList(historyList)
   }
 
@@ -76,6 +76,7 @@ function ChatHomeComponent(props: IChatProps) {
         createAt: message.createAt
       }
     })
+    // @ts-ignore
     await messageService.bulkPut(messages)
     notice.success('保存成功')
     setShowSaveModal(false)
@@ -91,6 +92,7 @@ function ChatHomeComponent(props: IChatProps) {
 
   const handleUpdateHistory = async () => {
     // 先删除所有老的消息，在插入新的消息
+    if (!activityHistoryId) return
     await messageService.deleteByHistoryId(activityHistoryId)
     const messages = Object.keys(messageList).map((key) => {
       const message = messageList[key]
@@ -102,13 +104,17 @@ function ChatHomeComponent(props: IChatProps) {
         createAt: message.createAt
       }
     })
+    // @ts-ignore
     await messageService.bulkPut(messages)
     notice.success('更新成功')
   }
 
   const handleLoadHistory = async (historyId: number) => {
-    const history = await historyService.get(historyId)
+    if (!historyId) return
+    const history: IHistoryDBProps | undefined = await historyService.get(historyId)
+    if (!history) return
     const messages = await messageService.listByHistoryId(historyId)
+    // @ts-ignore
     const messageList = messages.reduce((acc, cur) => {
       return {...acc, [cur.message_id]: cur}
     } ,{})
@@ -164,6 +170,7 @@ function ChatHomeComponent(props: IChatProps) {
       signal: abortController.signal,
       onMessage: (message: { role: string }) => {
         if (message.role) return
+        // @ts-ignore
         onResponseMessage(message);
       },
       onFinish: (reason: string | undefined) => {
@@ -180,7 +187,7 @@ function ChatHomeComponent(props: IChatProps) {
   return (
     <>
       <Layout className="pageContainer">
-        <Header style={{paddingInline: 10, background: props?.theme.colors.backgroundPrimary }}>
+        <Header style={{paddingInline: 10, background: props.theme?.colors.backgroundPrimary }}>
           <_Header
             title={currentSessionTitle}
             theme={props?.theme}
@@ -189,14 +196,14 @@ function ChatHomeComponent(props: IChatProps) {
             onClearMessage={handleClearMessage}
           />
         </Header>
-        <Content style={{background: props?.theme.colors.backgroundTertiary}}>
+        <Content style={{background: props.theme?.colors.backgroundTertiary}}>
           {Object.keys(messageList).length === 0 ? (
             <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
               <Empty image={null} description="开始会话吧" />
             </div>
           ) : <_Content onSubmitting={onSubmitting} messageList={messageList} onDelete={handleDeleteMessage} />}
         </Content>
-        <Footer style={{padding: "10px 20px 0 20px", background: props?.theme.colors.backgroundSecondary}}>
+        <Footer style={{padding: "10px 20px 0 20px", background: props.theme?.colors.backgroundSecondary}}>
           <Send
             text={props?.text || ''}
             theme={props?.theme}

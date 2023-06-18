@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
 import { Button, ConfigProvider, Switch, Tooltip } from "antd";
 import React from 'react';
-import { Translator } from "./Translator";
-import ChatPage from "./ChatPage";
-import Header  from "./Frame/Header";
+
 import BaseComponent from "./Layout";
 
 import { ITranslatorProps } from "./Translator"
