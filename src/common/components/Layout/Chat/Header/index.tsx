@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Space, Tooltip } from "antd";
-import {HistoryOutlined, SaveOutlined, SyncOutlined} from '@ant-design/icons';
+import {HistoryOutlined, SaveOutlined, SyncOutlined, FileExcelOutlined} from '@ant-design/icons';
 import { Theme } from 'baseui-sd/theme'
 
 interface IHeaderProps {
@@ -27,8 +27,8 @@ function ChatHeader(props: IHeaderProps) {
         <Tooltip title="保存当前会话">
           <Button onClick={() => props?.onShowSave?.()} type="text" icon={<SaveOutlined style={{fontSize: 18, color: props.theme?.colors.contentSecondary}}/>} />
         </Tooltip>
-        <Tooltip title="重置当前会话">
-          <Button onClick={() => props?.onClearMessage?.()} type="text" icon={<SyncOutlined style={{fontSize: 18, color: props.theme?.colors.contentSecondary}}/>} />
+        <Tooltip title="清除当前会话">
+          <Button onClick={() => props?.onClearMessage?.()} type="text" icon={<FileExcelOutlined style={{fontSize: 18, color: props.theme?.colors.contentSecondary}}/>} />
         </Tooltip>
       </Space>
     </div>

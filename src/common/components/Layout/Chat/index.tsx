@@ -5,8 +5,7 @@ import { Theme } from 'baseui-sd/theme'
 
 import { historyService } from '../../../services/history'
 import { messageService } from '../../../services/message'
-import { useCurrentThemeType } from "../../../hooks/useCurrentThemeType";
-import { IMessage, IMessageDBProps, IHistoryDBProps } from "../types"
+import { IMessage, IHistoryDBProps } from "../types"
 import {chat} from '../../../chat'
 
 import Send from './Send'

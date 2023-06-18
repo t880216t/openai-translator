@@ -3,11 +3,26 @@ import React from 'react';
 
 import BaseComponent from "./Layout";
 
-import { ITranslatorProps } from "./Translator"
 import { useTheme } from "../hooks/useTheme";
+import { ISettings } from "../types";
+import { Client as Styletron } from "styletron-engine-atomic";
 
+export interface IInnerTranslatorProps {
+  uuid?: string
+  text: string
+  autoFocus?: boolean
+  showSettings?: boolean
+  defaultShowSettings?: boolean
+  containerStyle?: React.CSSProperties
+  editorRows?: number
+  onSettingsSave?: (oldSettings: ISettings) => void
+}
 
-function ToolWarp(props: ITranslatorProps) {
+export interface IToolWarpProps extends IInnerTranslatorProps {
+  engine: Styletron
+}
+
+function ToolWarp(props: IToolWarpProps) {
   const { theme } = useTheme()
 
   return (

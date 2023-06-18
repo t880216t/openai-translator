@@ -45,12 +45,12 @@ function BaseComponent(props: IBaseProps) {
 
   const items: TabsProps['items'] = [
     {
-      key: 'chat',
-      label: '对话模式',
+      key: 'quick',
+      label: `快捷功能`,
     },
     {
-      key: 'quick',
-      label: `快捷问答`,
+      key: 'chat',
+      label: '对话模式',
     },
     {
       key: 'knowledge',
@@ -62,7 +62,7 @@ function BaseComponent(props: IBaseProps) {
     <div className="container">
       <div className="content">
         {activeKey === "chat" && <Chat theme={theme} {...props} />}
-        {activeKey === "quick" && <Quick theme={theme} {...props} />}
+        {activeKey === "quick" && <Quick theme={theme} {...props} engine={props.engine} />}
       </div>
       <div className="footer" style={{background: theme.colors.backgroundSecondary}}>
         <Tabs

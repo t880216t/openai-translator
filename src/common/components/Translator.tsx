@@ -67,7 +67,6 @@ import useResizeObserver from 'use-resize-observer'
 import _ from 'underscore'
 import { GlobalSuspense } from './GlobalSuspense'
 
-import { Switch } from 'antd';
 
 const cache = new LRUCache({
     max: 500,

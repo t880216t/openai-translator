@@ -48,7 +48,12 @@ export default (props: IHistoryModalProps) => {
               // 13位时间戳字符串转换为时间字符串
               const timeString = convertTimestampToString(item.createdAt||"");
               return (
-                <Card size="small" style={{marginBottom: 10}}>
+                <Card size="small"
+                      style={{
+                        marginBottom: 10,
+                        color: props.theme?.colors.contentSecondary,
+                        background: props.theme?.colors.backgroundSecondary,
+                      }}>
                   <div className="history-card-create-time">
                     <span>{timeString}</span>
                   </div>
