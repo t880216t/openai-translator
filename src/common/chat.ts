@@ -403,7 +403,7 @@ export async function chat(query: any) {
                     return
                 }
 
-                const { choices, id } = resp
+                const { choices, id, created } = resp
                 if (!choices || choices.length === 0) {
                     return { error: 'No result' }
                 }
@@ -422,7 +422,7 @@ export async function chat(query: any) {
                         targetTxt = quoteProcessor.processText(targetTxt)
                     }
 
-                    query.onMessage({ messageId: id, content: targetTxt, role: '', isWordMode })
+                    query.onMessage({ messageId: id, content: targetTxt, role: '', isWordMode, createAt: created  })
                 } else {
                     const { content = '', role } = choices[0].delta
 
@@ -432,7 +432,7 @@ export async function chat(query: any) {
                         targetTxt = quoteProcessor.processText(targetTxt)
                     }
 
-                    query.onMessage({ messageId: id, content: targetTxt, role, isWordMode })
+                    query.onMessage({ messageId: id, content: targetTxt, role, isWordMode, createAt: created })
                 }
             },
             onError: (err) => {

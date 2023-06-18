@@ -15,6 +15,7 @@ export interface IInnerProps {
 
 export interface IMessage {
   role?: string,
+  messageId: string,
   content: string,
   createAt: number,
 }

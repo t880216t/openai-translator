@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
+    "@ant-design/pro-components": "^2.5.11",
     "@emotion/styled": "^11.11.0",
     "@mantine/core": "^6.0.13",
     "@sentry/react": "^7.49.0",

@@ -38,10 +38,11 @@ export interface History {
 export interface Message {
     id?: number
     history_id: string
+    message_id: string
     content: string
-    role: 0 | 1 // 0: user, 1: bot
-    updatedAt: string
+    role: string
     createdAt: string
+    add_time: string
 }
 
 export class LocalDB extends Dexie {
@@ -56,7 +57,7 @@ export class LocalDB extends Dexie {
             vocabulary: 'word, reviewCount, description, updatedAt, createdAt',
             action: '++id, idx, mode, name, icon, rolePrompt, commandPrompt, outputRenderingFormat, updatedAt, createdAt',
             history: '++id, name, description, status, updatedAt, createdAt',
-            message: '++id, history_id, content, role, updatedAt, createdAt',
+            message: '++id, history_id, message_id, content, role, createdAt, add_time',
         })
     }
 }

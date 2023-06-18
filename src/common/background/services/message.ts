@@ -15,6 +15,15 @@ class BackgroundMessageService implements IMessageInternalService {
     delete(id: number): Promise<void> {
         return callMethod('messageService', 'delete', [id])
     }
+    deleteByHistoryId(id: number): Promise<void> {
+        return callMethod('messageService', 'deleteByHistoryId', [id])
+    }
+    listByHistoryId(id: number): Promise<void> {
+        return callMethod('messageService', 'listByHistoryId', [id])
+    }
+    bulkPut(messages: Message[]): Promise<void> {
+        return callMethod('messageService', 'bulkPut', [messages])
+    }
 }
 
 export const backgroundMessageService = new BackgroundMessageService()

@@ -8,6 +8,9 @@ export interface ICreateHistoryOption {
 
 export interface IHistoryInternalService {
     create(opt: ICreateHistoryOption): Promise<History>
+    list(): Promise<History[]>
+    get(id: number): Promise<History | undefined>
+    delete(id: number): Promise<void>
 }
 
 class HistoryInternalService implements IHistoryInternalService {
