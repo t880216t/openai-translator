@@ -1,24 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Button, Avatar, Tooltip } from "antd";
-import { CopyOutlined, UserOutlined, NotificationOutlined, DeleteOutlined } from '@ant-design/icons'
+import { CopyOutlined, UserOutlined, DeleteOutlined } from '@ant-design/icons'
 import { CopyButton } from '@mantine/core';
 
-import "./index.scss"
-import { IMessage } from "../../../../types";
 // @ts-ignore
 import ChatGPTLogo from './ChatGPT_logo.svg';
 import { Markdown } from './markdown'
+import { IMessage } from '../../../types'
+
+import "./index.scss"
 
 interface IMessageProps extends IMessage {
+  messageId: string
+  isMe: boolean
+  onSubmitting: boolean
   onDelete?: (messageId: string) => void
 }
 
 function Message(props: IMessageProps) {
-  const [content, setContent] = useState(props.text)
-
-  useEffect(() => {
-    setContent(props.text)
-  }, [props.text])
 
   const handleDelete = () => {
     props.onDelete?.(props.messageId)
@@ -33,10 +32,10 @@ function Message(props: IMessageProps) {
       </div>
       <div className="content-wrap">
         <div className="content">
-          <Markdown submitState={props.submitState} content={content || ''} />
+          <Markdown submitState={props.onSubmitting} content={props.content || ''} />
         </div>
         <div className="action-wrap">
-          <CopyButton value={content || ''}>
+          <CopyButton value={props.content || ''}>
             {({ copy }) => (
               <Tooltip title="复制">
                 <Button onClick={copy} type="text" icon={<CopyOutlined style={{color: '#b3b3ba'}} />} />

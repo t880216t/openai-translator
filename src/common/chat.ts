@@ -188,8 +188,6 @@ export class QuoteProcessor {
     }
 }
 
-const chineseLangCodes = ['zh-Hans', 'zh-Hant', 'lzh', 'yue', 'jdbhw', 'xdbhw']
-
 export async function chat(query: any) {
     const fetcher = getUniversalFetch()
     let rolePrompt = ''

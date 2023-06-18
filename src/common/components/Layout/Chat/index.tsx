@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { historyService } from '../../../services/history'
 
 import { useCurrentThemeType } from "../../../hooks/useCurrentThemeType";
+import {chat} from '../../../chat'
 
 import Send from './Send'
 import _Header from './Header'
@@ -18,18 +19,74 @@ interface IChatProps {
 
 function ChatHomeComponent(props: IChatProps) {
   const [messageList, setMessageList] = useState<{[key: string]: any}>({})
-  const [activitySessionId, setActivitySessionId] = useState(uuidv4().replace(/-/g, ''));
+  const [activityHistoryId, setActivityHistoryId] = useState(uuidv4().replace(/-/g, ''));
+  const [abortController] = useState(new AbortController());
+  const [onSubmitting, setOnSubmitting] = useState(false);
 
   useEffect(() => {
-    const messageList = localStorage.getItem(activitySessionId);
-    if (messageList) {
-      setMessageList(JSON.parse(messageList))
-    }
-  }, [activitySessionId])
+    console.log("activityHistoryId", activityHistoryId);
+  }, [activityHistoryId])
+
+  useEffect(() => {
+    console.log("messageList", messageList);
+  }, [messageList])
 
   const handleSaveHistory = () => {
     historyService.create({name: "test"})
     notice.success('保存成功')
+  }
+
+  // 发送消息
+  const handleSendMessage = async (prompt: string) => {
+    // 添加一条发送人是自己的message
+    setMessageList({
+      ...messageList,
+      [uuidv4().replace(/-/g, '')]:{
+        role: 'user',
+        content: prompt,
+        createAt: new Date().getTime()
+      }
+    })
+    await sendMessage(prompt)
+  }
+
+  const onResponseMessage = (message: any) => {
+    // 添加一条发送人是机器人的message，根据messageId合并流式接口返回的多条消息
+    setMessageList((messageList) => {
+      if (messageList[message.messageId]) {
+        const oldMessage = messageList[message.messageId]
+        // 如果是流式接口返回的消息，合并到原来消息的content中
+        return {...messageList, [message.messageId]: {...oldMessage, content: oldMessage.content + message.content}}
+      }
+      return {...messageList, [message.messageId]: message}
+    })
+  }
+
+  const sendMessage = async (prompt: string) => {
+    setOnSubmitting(true)
+    await chat({
+      text: prompt,
+      assistantPrompts: [],
+      lastPrompt: "",
+      onStatusCode: (statusCode: any) => {
+        console.log(statusCode);
+      },
+      signal: abortController.signal,
+      onMessage: (message: { role: any }) => {
+        if (message.role) {
+          return
+        }
+        onResponseMessage(message);
+      },
+      onFinish: (reason: any) => {
+        console.log("reason", reason);
+        setOnSubmitting(false)
+      },
+      onError: (error: any) => {
+        console.log(error);
+        setOnSubmitting(false)
+      },
+    })
   }
 
   return (
@@ -45,7 +102,7 @@ function ChatHomeComponent(props: IChatProps) {
         ) : <_Content messageList={messageList} />}
       </Content>
       <Footer style={{padding: "10px 20px 0 20px", background: props?.theme.colors.backgroundSecondary}}>
-        <Send theme={props?.theme} />
+        <Send theme={props?.theme} onSendMessage={(prompt: string) => handleSendMessage(prompt)} onSubmitting={onSubmitting} />
       </Footer>
     </Layout>
   );

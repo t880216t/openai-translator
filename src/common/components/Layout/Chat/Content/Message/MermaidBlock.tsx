@@ -8,7 +8,7 @@ import { downloadDir } from '@tauri-apps/api/path';
 interface MermaidComponentProps {
   code: string;
   content: string;
-  submitState?: number
+  submitState?: boolean
 }
 
 const mermaidAPI = mermaid.mermaidAPI;

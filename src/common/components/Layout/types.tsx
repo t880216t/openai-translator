@@ -12,3 +12,9 @@ export interface IInnerProps {
   onSettingsSave?: (oldSettings: ISettings) => void
   onMessageResult?: (message: IMessage) => void
 }
+
+export interface IMessage {
+  role?: string,
+  content: string,
+  createAt: number,
+}

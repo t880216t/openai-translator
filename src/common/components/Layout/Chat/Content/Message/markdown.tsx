@@ -59,7 +59,7 @@ const ImagePreview = styled.div`
 export interface MarkdownProps {
   content: string;
   className?: string;
-  submitState?: number;
+  submitState?: boolean;
 }
 
 export function Markdown(_props: MarkdownProps) {

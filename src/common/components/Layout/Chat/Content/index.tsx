@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "antd";
 
 import Message from './Message'
-import { IMessage } from "../../../types";
+import { IMessage } from '../../types'
 
 import "./index.scss"
 
 export interface IMessagesProps {
   messageList: {[key: string]: IMessage}
-  submitState: number
   onDelete: (messageId: string) => void
+  onSubmitting: boolean
 }
 
 function Messages(props: IMessagesProps) {
-  const [list, setList] = useState(props.messageList)
-
-  useEffect(() => {
-    setList(props.messageList)
-  }, [props.messageList])
-
   return (
     <div className="message-wrap" id="messages">
-      {list && Object.keys(list).map((key) => {
-        return <Message onDelete={(messageId) => props.onDelete(messageId)} submitState={props.submitState} key={key} messageId={key} isMe={list[key].isMe} text={list[key].text} />
+      {props?.messageList && Object.keys(props.messageList).map((key) => {
+        return (
+          <Message
+            onDelete={(messageId) => props.onDelete(messageId)}
+            onSubmitting={props.onSubmitting}
+            key={key}
+            messageId={key}
+            isMe={props.messageList[key].role=="user"}
+            content={props.messageList[key].content}
+          />
+        )
       })}
     </div>
   );

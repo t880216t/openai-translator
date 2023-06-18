@@ -23,6 +23,8 @@ interface Item {
 interface ISendProps{
   theme?: useCurrentThemeType;
   onSubmitActionDone?: (submitState: number) => void;
+  onSendMessage: (prompt: string) => void;
+  onSubmitting: boolean;
 }
 
 function Send(props: ISendProps) {
@@ -136,8 +138,11 @@ function Send(props: ISendProps) {
 
   // 重构
   const handleUserPrompt = (prompt: string) => {
-    const timeStr = new Date().getTime().toString()
-    console.log(timeStr, prompt);
+    if (prompt.trim() === "") {
+      return;
+    }
+    setOriginalText("");
+    props.onSendMessage(prompt);
   };
 
   return (
@@ -165,8 +170,8 @@ function Send(props: ISendProps) {
         className="send"
         size="small"
         type={originalText?.trim() === "" ? "default" : "primary"}
-        icon={<SendOutlined style={submitLoading ? {color: props.theme.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />}
-        loading={submitLoading}
+        icon={<SendOutlined style={props.onSubmitting ? {color: props.theme.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />}
+        loading={props.onSubmitting}
         style={{
           background: originalText?.trim() === "" ? props.theme.colors.backgroundSecondary: props.theme.colors.backgroundInversePrimary,
           color: originalText?.trim() === "" ? props.theme.colors.contentPrimary: props.theme.colors.contentInversePrimary,
