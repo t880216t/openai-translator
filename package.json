@@ -83,6 +83,7 @@
     "styletron-react": "^6.1.0",
     "swr": "^2.1.5",
     "tesseract.js": "^4.0.2",
+    "umi-request": "^1.4.0",
     "underscore": "^1.13.6",
     "url-join-ts": "^1.0.5",
     "use-resize-observer": "^9.1.0",

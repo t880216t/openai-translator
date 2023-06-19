@@ -43,6 +43,7 @@ export interface IThemedStyleProps {
 }
 
 export interface ISettings {
+    userToken?: string
     apiKeys: string
     apiURL: string
     apiURLPath: string

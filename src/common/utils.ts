@@ -43,6 +43,7 @@ const settingKeys: Record<keyof ISettings, number> = {
     selectInputElementsText: 1,
     disableCollectingStatistics: 1,
     allowUsingClipboardWhenSelectedTextNotAvailable: 1,
+    userToken: 1,
 }
 
 export async function getSettings(): Promise<ISettings> {
@@ -88,6 +89,9 @@ export async function getSettings(): Promise<ISettings> {
     }
     if (!settings.themeType) {
         settings.themeType = 'followTheSystem'
+    }
+    if (!settings.userToken) {
+        settings.userToken = ""
     }
     return settings
 }

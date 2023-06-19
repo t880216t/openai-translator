@@ -1,11 +1,14 @@
 import { Button, ConfigProvider, Switch, Tooltip } from "antd";
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
 import BaseComponent from "./Layout";
+import Start from "./Start"
 
 import { useTheme } from "../hooks/useTheme";
 import { ISettings } from "../types";
 import { Client as Styletron } from "styletron-engine-atomic";
+import * as utils from "../utils";
+import { useSettings } from "../hooks/useSettings";
 
 export interface IInnerTranslatorProps {
   uuid?: string
@@ -23,7 +26,21 @@ export interface IToolWarpProps extends IInnerTranslatorProps {
 }
 
 function ToolWarp(props: IToolWarpProps) {
-  const { theme } = useTheme()
+  const { theme, themeType } = useTheme()
+  const [systemSettings, setSystemSettings] = useState<ISettings>()
+  const skipLogin = true
+
+  useEffect(async () => {
+    const settings = await utils.getSettings()
+    if (settings){
+      if (!settings.userToken && skipLogin){
+        const uuid = utils.generateUUID();
+        const new_settings = { ...settings, userToken: uuid }
+        await utils.setSettings(new_settings)
+        setSystemSettings(new_settings)
+      }
+    }
+  }, []);
 
   return (
     <ConfigProvider
@@ -31,10 +48,17 @@ function ToolWarp(props: IToolWarpProps) {
         token: {
           colorText: theme.colors.contentSecondary,
           colorPrimary: theme.colors.contentPrimary,
+          colorBgBase: theme.colors.backgroundTertiary
         },
       }}
     >
-      <BaseComponent {...props} />
+      {systemSettings && systemSettings.userToken ? (
+        <BaseComponent {...props} />
+      ): skipLogin ?(
+        <BaseComponent {...props} />
+      ): (
+        <Start />
+      )}
     </ConfigProvider>
   );
 }

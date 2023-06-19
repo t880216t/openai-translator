@@ -4,11 +4,11 @@ import type { TabsProps } from 'antd';
 import { SettingOutlined } from '@ant-design/icons'
 
 import { useTheme } from "../../hooks/useTheme";
-import * as utils from '../../utils'
 import { Settings } from '../Settings'
 
 import Chat from "./Chat"
 import Quick from "./Quick"
+import Knowledge from "./Knowledge"
 
 import "./index.scss"
 import { IInnerProps } from './types';
@@ -18,7 +18,7 @@ interface IBaseProps extends IInnerProps{
   engine: Styletron
 }
 
-function BaseComponent(props: IBaseProps) {
+function  BaseComponent(props: IBaseProps) {
   const [activeKey, setActiveKey] = useState("quick");
   const [showSetting, setShowSetting] = useState(false);
   const { theme } = useTheme()
@@ -63,6 +63,7 @@ function BaseComponent(props: IBaseProps) {
       <div className="content">
         <Chat isShow={activeKey == "chat"} theme={theme} {...props} />
         <Quick isShow={activeKey == "quick"} theme={theme} {...props} engine={props.engine} />
+        <Knowledge showSetting={showSetting} isShow={activeKey == "knowledge"} theme={theme} {...props} engine={props.engine} />
       </div>
       <div className="footer" style={{background: theme.colors.backgroundSecondary}}>
         <Tabs

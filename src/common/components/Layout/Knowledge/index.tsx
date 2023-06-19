@@ -1,21 +1,23 @@
 import React, { useState } from "react";
-import { Layout, Button, Empty, message as notice } from "antd";
+import { Layout, Button, Empty, message as notice, FloatButton } from "antd";
 import { Theme } from "baseui-sd/theme";
 import { Client as Styletron } from "styletron-engine-atomic";
 
 import _Header from "./Header"
-import { Translator } from "./Translator"
+import _Content from "./Content"
 
 import "./index.scss"
+import { PlusOutlined } from "@ant-design/icons";
 
 interface IQuickProps {
+  showSetting: boolean
   isShow: boolean
   text?: string
   theme?: Theme;
-  engine: Styletron;
+  engine?: Styletron;
 }
 
-const { Header, Content } = Layout;
+const { Header, Footer, Content } = Layout;
 
 function QuickComponent(props: IQuickProps) {
   const [count, setCount] = useState(0);
@@ -30,10 +32,19 @@ function QuickComponent(props: IQuickProps) {
         <Header style={{paddingInline: 10, background: props.theme?.colors.backgroundPrimary }}>
           <_Header />
         </Header>
-        <Content style={{background: props.theme?.colors.backgroundSecondary}}>
-          <Translator text={props.text || ""} engine={props.engine} autoFocus />
+        <Content style={{background: props.theme?.colors.backgroundSecondary, overflowY: 'auto'}}>
+          <_Content />
         </Content>
       </Layout>
+      {(props.isShow && !props.showSetting )&& (
+        <FloatButton
+          tooltip="新建知识库"
+          type="primary"
+          onClick={() => console.log('click')}
+          icon={<PlusOutlined />}
+          style={{ bottom: "15%" }}
+        />
+      )}
     </>
   );
 }
