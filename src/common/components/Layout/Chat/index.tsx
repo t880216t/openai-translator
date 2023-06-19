@@ -7,6 +7,8 @@ import { historyService } from '../../../services/history'
 import { messageService } from '../../../services/message'
 import { IMessage, IHistoryDBProps } from "../types"
 import {chat} from '../../../chat'
+// @ts-ignore
+import NoData from "./no_data.svg"
 
 import Send from './Send'
 import _Header from './Header'
@@ -198,7 +200,7 @@ function ChatHomeComponent(props: IChatProps) {
         <Content style={{background: props.theme?.colors.backgroundTertiary}}>
           {Object.keys(messageList).length === 0 ? (
             <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-              <Empty image={null} description="开始会话吧" />
+              <Empty image={NoData} description="开始会话吧" />
             </div>
           ) : <_Content onSubmitting={onSubmitting} messageList={messageList} onDelete={handleDeleteMessage} />}
         </Content>

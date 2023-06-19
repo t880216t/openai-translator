@@ -19,7 +19,7 @@ interface IBaseProps extends IInnerProps{
 }
 
 function BaseComponent(props: IBaseProps) {
-  const [activeKey, setActiveKey] = useState("chat");
+  const [activeKey, setActiveKey] = useState("quick");
   const [showSetting, setShowSetting] = useState(false);
   const { theme } = useTheme()
 
