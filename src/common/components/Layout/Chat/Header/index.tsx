@@ -12,15 +12,17 @@ interface IHeaderProps {
 }
 
 import "./index.scss";
+import { useTheme } from "../../../../hooks/useTheme";
 
 function ChatHeader(props: IHeaderProps) {
-
+  const { theme, themeType } = useTheme()
   return (
     <ConfigProvider
       theme={{
         token: {
-          colorText: props.theme?.colors.contentInverseSecondary,
-          colorPrimary: props.theme?.colors.contentInversePrimary,
+          colorText: themeType == "dark"? theme?.colors.contentInverseSecondary : theme?.colors.contentSecondary,
+          colorPrimary: themeType == "dark"? theme?.colors.contentInversePrimary : theme?.colors.contentPrimary,
+          colorBgBase: themeType == "dark"? theme?.colors.backgroundInverseSecondary : theme?.colors.backgroundSecondary,
         },
       }}
     >
