@@ -61,8 +61,8 @@ function BaseComponent(props: IBaseProps) {
   return (
     <div className="container">
       <div className="content">
-        {activeKey === "chat" && <Chat theme={theme} {...props} />}
-        {activeKey === "quick" && <Quick theme={theme} {...props} engine={props.engine} />}
+        <Chat isShow={activeKey == "chat"} theme={theme} {...props} />
+        <Quick isShow={activeKey == "quick"} theme={theme} {...props} engine={props.engine} />
       </div>
       <div className="footer" style={{background: theme.colors.backgroundSecondary}}>
         <Tabs

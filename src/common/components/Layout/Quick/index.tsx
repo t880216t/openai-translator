@@ -9,6 +9,7 @@ import { Translator } from "./Translator"
 import "./index.scss"
 
 interface IQuickProps {
+  isShow: boolean
   text?: string
   theme?: Theme;
   engine?: Styletron;
@@ -25,7 +26,7 @@ function QuickComponent(props: IQuickProps) {
 
   return (
     <>
-      <Layout className="pageContainer">
+      <Layout style={{height: props.isShow ? "100%": "0px"}} className="pageContainer">
         <Header style={{paddingInline: 10, background: props.theme?.colors.backgroundPrimary }}>
           <_Header />
         </Header>

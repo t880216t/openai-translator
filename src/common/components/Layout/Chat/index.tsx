@@ -20,6 +20,7 @@ import "./index.scss"
 const { Header, Footer, Content } = Layout;
 
 interface IChatProps {
+  isShow: boolean
   text?: string
   theme?: Theme;
 }
@@ -33,15 +34,35 @@ function ChatHomeComponent(props: IChatProps) {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyList, setHistoryList] = useState<any[]>([]);
-
-
-  useEffect(() => {
-    // console.log("activityHistoryId", activityHistoryId);
-  }, [activityHistoryId])
+  const [userPrompts, setUserPrompts] = useState<string[]>([]);
+  const [lastAssistPrompt, setLastAssistPrompt] = useState<string|null>(null);
 
   useEffect(() => {
-    // console.log("messageList", messageList);
+    if(Object.keys(messageList).length > 0) {
+      const userPrompts = Object.keys(messageList).filter((key) => {
+        return messageList[key].role === 'user' && messageList[key].content
+      }).map((key) => {
+        return messageList[key].content
+      })
+      // 获取messageList最后一条bot消息的content
+      const lastAssistMessage = Object.keys(messageList).filter((key) => {
+        return messageList[key].role !== 'user' && messageList[key].content
+      }).map((key) => {
+        return messageList[key].content
+      }).pop()
+      if (lastAssistMessage) {
+        setUserPrompts(userPrompts)
+        setLastAssistPrompt(lastAssistMessage)
+      }
+    }
   }, [messageList])
+
+  useEffect(() => {
+    const chatContainer = document.getElementById('messages');
+    if (chatContainer){
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }, [messageList]);
 
   // 列表头部事件
   const handleClearMessage = () => {
@@ -166,8 +187,8 @@ function ChatHomeComponent(props: IChatProps) {
     setOnSubmitting(true)
     await chat({
       text: prompt,
-      assistantPrompts: [],
-      lastPrompt: "",
+      assistantPrompts: userPrompts,
+      lastPrompt: lastAssistPrompt,
       signal: abortController.signal,
       onMessage: (message: { role: string }) => {
         if (message.role) return
@@ -187,7 +208,7 @@ function ChatHomeComponent(props: IChatProps) {
 
   return (
     <>
-      <Layout className="pageContainer">
+      <Layout style={{height: props.isShow ? "100%": "0px"}} className="pageContainer">
         <Header style={{paddingInline: 10, background: props.theme?.colors.backgroundPrimary }}>
           <_Header
             title={currentSessionTitle}

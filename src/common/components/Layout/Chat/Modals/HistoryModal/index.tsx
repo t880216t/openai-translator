@@ -2,10 +2,11 @@ import { SelectOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   ModalForm,
 } from '@ant-design/pro-components';
-import { Button, Card, Empty, message, Space, Tooltip } from "antd";
+import { Button, Card, Empty, ConfigProvider, Space, Tooltip } from "antd";
 
 import "./index.scss"
 import { Theme } from "baseui-sd/theme";
+import { useTheme } from "../../../../../hooks/useTheme";
 
 interface IHistoryModalProps {
   theme?: Theme
@@ -30,7 +31,17 @@ function convertTimestampToString(timestamp: string) {
 }
 
 export default (props: IHistoryModalProps) => {
+  const { theme, themeType } = useTheme()
   return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorText: themeType == "dark"? theme?.colors.contentInverseSecondary : theme?.colors.contentSecondary,
+          colorPrimary: themeType == "dark"? theme?.colors.contentInversePrimary : theme?.colors.contentPrimary,
+          colorBgBase: themeType == "dark"? theme?.colors.backgroundInverseSecondary : theme?.colors.backgroundSecondary,
+        },
+      }}
+    >
     <ModalForm
       title="历史会话"
       open={props.showModal}
@@ -51,8 +62,6 @@ export default (props: IHistoryModalProps) => {
                 <Card size="small"
                       style={{
                         marginBottom: 10,
-                        color: props.theme?.colors.contentSecondary,
-                        background: props.theme?.colors.backgroundSecondary,
                       }}>
                   <div className="history-card-create-time">
                     <span>{timeString}</span>
@@ -88,5 +97,6 @@ export default (props: IHistoryModalProps) => {
       )}
 
     </ModalForm>
+    </ConfigProvider>
   );
 }
