@@ -30,6 +30,7 @@ function ToolWarp(props: IToolWarpProps) {
   const [systemSettings, setSystemSettings] = useState<ISettings>()
   const skipLogin = true
 
+  // @ts-ignore
   useEffect(async () => {
     const settings = await utils.getSettings()
     if (settings){

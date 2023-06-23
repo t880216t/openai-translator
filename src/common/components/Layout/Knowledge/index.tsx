@@ -54,8 +54,9 @@ function QuickComponent(props: IQuickProps) {
   const [selectKnowledgeList, setSelectKnowledgeList] = useState<IKnowledge[]>([]);
   const [messageList, setMessageList] = useState<{[key: string]: any}>({});
 
+  // @ts-ignore
   useEffect(async () => {
-    const res = await queryKnowledgeList<IKnowledgeResponse>({listType});
+    const res: IKnowledgeResponse = await queryKnowledgeList({listType});
     if (res.code == 0) {
       setKnowledgeContent(res.content);
     }
@@ -77,6 +78,7 @@ function QuickComponent(props: IQuickProps) {
     setShowCreateModal(true);
   }
 
+  // @ts-ignore
   const handleCreateKnowledge = async (values) => {
     setSubmitLoading(true);
     queryKnowledgeCreate(values).then(() => {
@@ -90,7 +92,7 @@ function QuickComponent(props: IQuickProps) {
   }
 
   const handlePageChange = async (page: number) => {
-    const res = await queryKnowledgeList<IKnowledgeResponse>({listType, pageNum: page});
+    const res: IKnowledgeResponse = await queryKnowledgeList({listType, pageNum: page});
     if (res.code == 0) {
       setKnowledgeContent(res.content);
     }
@@ -102,7 +104,7 @@ function QuickComponent(props: IQuickProps) {
 
   const handleListTypeChange = async (type: string) => {
     setListType(type);
-    const res = await queryKnowledgeList<IKnowledgeResponse>({listType: type});
+    const res: IKnowledgeResponse = await queryKnowledgeList({listType: type});
     if (res.code == 0) {
       setKnowledgeContent(res.content);
     }
@@ -155,6 +157,11 @@ function QuickComponent(props: IQuickProps) {
     }
   };
 
+  const handleDeleteMessage = (messageId: string) => {
+    const newMessageList = {...messageList};
+    delete newMessageList[messageId];
+    setMessageList(newMessageList);
+  }
 
   const handleDeleteKnowledge = (knowledgeId: string) => {
     queryKnowledgeRemove({knowledgeId}).then((res) => {
@@ -183,6 +190,7 @@ function QuickComponent(props: IQuickProps) {
             showDrawer={showDrawer}
             submitLoading={submitLoading}
             onCloseDrawer={() => setShowDrawer(false)}
+            onDelete={handleDeleteMessage}
             onSendMessage={handleSendMessage}
           />
         </Header>

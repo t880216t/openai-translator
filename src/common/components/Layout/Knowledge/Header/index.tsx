@@ -13,9 +13,10 @@ interface IHeaderProps {
   onListTypeChange: (listType: string) => void;
   showDrawer: boolean
   submitLoading: boolean
-  onStartKnowLedgeChat?: () => void
-  selectKnowledgeList?: IKnowledge[]
+  onStartKnowLedgeChat: () => void
+  selectKnowledgeList: IKnowledge[]
   onCloseDrawer: () => void
+  onDelete: (id: string) => void
   onSendMessage: (prompt: string) => void
   messageList: {[key: string]: IMessage}
 }
@@ -38,7 +39,7 @@ function Header(props: IHeaderProps) {
       }}
     >
       <div className="header-wrap">
-        <div className="title" style={{color: props.theme?.colors?.contentPrimary}}>
+        <div className="title" style={{color: theme?.colors?.contentPrimary}}>
           <span>K-DB</span>
         </div>
         <div>
@@ -54,11 +55,12 @@ function Header(props: IHeaderProps) {
         </div>
         <ChatDrawer
           messageList={props.messageList}
-          selectKnowledgeList={props?.selectKnowledgeList}
+          selectKnowledgeList={props.selectKnowledgeList}
           showDrawer={props.showDrawer}
           submitLoading={props.submitLoading}
           onCloseDrawer={props.onCloseDrawer}
           onSendMessage={props.onSendMessage}
+          onDelete={props.onDelete}
         />
       </div>
     </ConfigProvider>

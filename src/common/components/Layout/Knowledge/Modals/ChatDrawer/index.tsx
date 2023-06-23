@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import { Button, Drawer, Space, Divider, Tooltip } from "antd";
 import { CloseOutlined } from '@ant-design/icons'
@@ -5,6 +6,7 @@ import { CloseOutlined } from '@ant-design/icons'
 import ChatContent from "../../../Chat/Content";
 import ChatSend from "../../../Chat/Send";
 import {IKnowledge} from "../../index"
+
 import CodeIcon from './file_icon/code.svg'
 import ImageIcon from './file_icon/img.svg'
 import LinkIcon from './file_icon/link.svg'
@@ -23,6 +25,7 @@ interface IDrawerProps {
   showDrawer: boolean;
   submitLoading: boolean;
   onCloseDrawer: () => void;
+  onDelete: (id: string) => void;
   onSendMessage: (prompt: string) => void;
   messageList: {[key: string]: IMessage}
 }
@@ -101,7 +104,7 @@ function BasicComponent(props: IDrawerProps) {
           </div>
         </div>
         <Divider style={{margin: 0, background: theme.colors.backgroundTertiary}} />
-        <ChatContent needShowThinking={true} messageList={props.messageList} onSubmitting={props.submitLoading}/>
+        <ChatContent needShowThinking={true} messageList={props.messageList} onSubmitting={props.submitLoading} onDelete={props.onDelete}/>
         <div  style={{padding: "10px 5px"}}>
           <ChatSend
             text={props?.text || ''}

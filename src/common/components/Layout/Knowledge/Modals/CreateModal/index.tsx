@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+// @ts-nocheck
 import {
   ModalForm,
   ProForm,
@@ -15,6 +15,7 @@ interface ICreateModalProps {
   submitLoading: boolean;
   showModal: boolean;
   onCreateKnowledge: (params: any) => void;
+  onOpenChange: (showModal: boolean) => void;
 }
 
 export interface IFormProps {
@@ -59,7 +60,7 @@ export default (props: ICreateModalProps) => {
           // 当dataType字段为file时，获取文件对象
           let new_values = {...values}
           if (values?.dataType == 'file'){
-            new_values.file = values?.file?.[0].originFileObj as Blob
+            new_values.file = values?.file?.[0].originFileObj
           }
           props.onCreateKnowledge(new_values);
           return true;

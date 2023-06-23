@@ -1,11 +1,11 @@
 import * as utils from './utils'
 import { getUniversalFetch } from './universal-fetch';
 
-const settings = await utils.getSettings()
 const domain = "http://localhost:5000";
 // const domain = settings.apiURL === "https://api.openai.com" ? 'http://localhost:5000' : settings.apiURL;
 
 export async function request(url: string, options: RequestInit): Promise<any> {
+    const settings = await utils.getSettings()
     const fetcher = getUniversalFetch();
     // 合并请求头
     options.headers = {
