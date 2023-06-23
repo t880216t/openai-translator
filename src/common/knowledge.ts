@@ -1,11 +1,9 @@
 import * as utils from './utils'
 import { getUniversalFetch } from './universal-fetch';
 
-const domain = "http://localhost:5000";
-// const domain = settings.apiURL === "https://api.openai.com" ? 'http://localhost:5000' : settings.apiURL;
-
 export async function request(url: string, options: RequestInit): Promise<any> {
     const settings = await utils.getSettings()
+    const domain = settings.apiURL === "https://api.openai.com" ? 'http://localhost:5000' : settings.apiURL;
     const fetcher = getUniversalFetch();
     // 合并请求头
     options.headers = {
@@ -13,7 +11,7 @@ export async function request(url: string, options: RequestInit): Promise<any> {
         'User-Token': settings.userToken ?? '',
         'ApiKey': settings.apiKeys ?? '',
     }
-    const response = await fetcher(url, options);
+    const response = await fetcher(`${domain}${url}`, options);
     if (!response.ok) {
         throw new Error('Request failed');
     }
@@ -21,7 +19,7 @@ export async function request(url: string, options: RequestInit): Promise<any> {
 }
 
 export async function queryKnowledgeList(params: any) {
-    return request(`${domain}/api/knowledge/list`, {
+    return request(`/api/knowledge/list`, {
         method: 'POST',
         body: JSON.stringify(params),
         headers: {
@@ -31,7 +29,7 @@ export async function queryKnowledgeList(params: any) {
 }
 
 export async function queryKnowledgeChat(params: any) {
-    return request(`${domain}/api/knowledge/question`, {
+    return request(`/api/knowledge/question`, {
         method: 'POST',
         body: JSON.stringify(params),
         headers: {
@@ -41,7 +39,7 @@ export async function queryKnowledgeChat(params: any) {
 }
 
 export async function queryKnowledgeRemove(params: any) {
-    return request(`${domain}/api/knowledge/remove`, {
+    return request(`/api/knowledge/remove`, {
         method: 'POST',
         body: JSON.stringify(params),
         headers: {
@@ -57,7 +55,7 @@ export async function queryKnowledgeCreate(params: any) {
             formData.append(key, params[key]);
         }
     }
-    return request(`${domain}/api/knowledge/create`, {
+    return request(`/api/knowledge/create`, {
         method: 'POST',
         body: formData,
     });
