@@ -7,8 +7,6 @@ import { historyService } from '../../../services/history'
 import { messageService } from '../../../services/message'
 import { IMessage, IHistoryDBProps } from "../types"
 import {chat} from '../../../chat'
-// @ts-ignore
-import NoData from "./no_data.svg"
 
 import Send from './Send'
 import _Header from './Header'
@@ -36,6 +34,7 @@ function ChatHomeComponent(props: IChatProps) {
   const [historyList, setHistoryList] = useState<any[]>([]);
   const [userPrompts, setUserPrompts] = useState<string[]>([]);
   const [lastAssistPrompt, setLastAssistPrompt] = useState<string|null>(null);
+  const [needShowThinking, setNeedShowThinking] = useState(false);
 
   useEffect(() => {
     if(Object.keys(messageList).length > 0) {
@@ -185,6 +184,7 @@ function ChatHomeComponent(props: IChatProps) {
 
   const sendMessage = async (prompt: string) => {
     setOnSubmitting(true)
+    setNeedShowThinking(true)
     await chat({
       text: prompt,
       assistantPrompts: userPrompts,
@@ -194,6 +194,7 @@ function ChatHomeComponent(props: IChatProps) {
         if (message.role) return
         // @ts-ignore
         onResponseMessage(message);
+        setNeedShowThinking(false)
       },
       onFinish: (reason: string | undefined) => {
         console.log("reason", reason);
@@ -202,6 +203,7 @@ function ChatHomeComponent(props: IChatProps) {
       onError: (error: any) => {
         console.log(error);
         setOnSubmitting(false)
+        setNeedShowThinking(false)
       },
     })
   }
@@ -219,16 +221,11 @@ function ChatHomeComponent(props: IChatProps) {
           />
         </Header>
         <Content style={{background: props.theme?.colors.backgroundTertiary}}>
-          {Object.keys(messageList).length === 0 ? (
-            <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-              <Empty image={NoData} description="开始会话吧" />
-            </div>
-          ) : <_Content onSubmitting={onSubmitting} messageList={messageList} onDelete={handleDeleteMessage} />}
+          <_Content needShowThinking={needShowThinking} onSubmitting={onSubmitting} messageList={messageList} onDelete={handleDeleteMessage} />
         </Content>
         <Footer style={{padding: "10px 20px 0 20px", background: props.theme?.colors.backgroundSecondary}}>
           <Send
             text={props?.text || ''}
-            theme={props?.theme}
             onSendMessage={(prompt: string) => handleSendMessage(prompt)}
             onSubmitting={onSubmitting}
           />

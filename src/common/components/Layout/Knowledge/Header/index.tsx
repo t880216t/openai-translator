@@ -1,16 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Space, Radio, ConfigProvider, Button } from "antd";
-import { MessageOutlined } from '@ant-design/icons';
-import { Theme } from 'baseui-sd/theme'
+import { CommentOutlined } from '@ant-design/icons';
+
+import ChatDrawer from "../Modals/ChatDrawer"
 import "./index.scss";
 import { useTheme } from "../../../../hooks/useTheme";
+import { IKnowledge } from "../index";
+import { IMessage } from '../../types'
 
 interface IHeaderProps {
-  theme?: Theme;
+  listType: string;
+  onListTypeChange: (listType: string) => void;
+  showDrawer: boolean
+  submitLoading: boolean
+  onStartKnowLedgeChat?: () => void
+  selectKnowledgeList?: IKnowledge[]
+  onCloseDrawer: () => void
+  onSendMessage: (prompt: string) => void
+  messageList: {[key: string]: IMessage}
 }
 
-function QuickHeader(props: IHeaderProps) {
+function Header(props: IHeaderProps) {
   const { theme, themeType } = useTheme()
+
+  const handleShowDrawer = () => {
+    props.onStartKnowLedgeChat()
+  }
+
   return (
     <ConfigProvider
       theme={{
@@ -26,19 +42,27 @@ function QuickHeader(props: IHeaderProps) {
           <span>K-DB</span>
         </div>
         <div>
-          <Radio.Group size="small" defaultValue="a" buttonStyle="solid">
-            <Radio.Button value="a">我的库</Radio.Button>
-            <Radio.Button value="b">公共库</Radio.Button>
+          <Radio.Group value={props.listType} onChange={(e) => props.onListTypeChange(e.target.value)} size="small" defaultValue="a" buttonStyle="solid">
+            <Radio.Button value="1">我的库</Radio.Button>
+            <Radio.Button value="2">公共库</Radio.Button>
           </Radio.Group>
         </div>
         <div>
           <Space>
-            <Button type="text" icon={<MessageOutlined style={{color: theme?.colors.contentPrimary}} />}/>
+            <Button onClick={() => handleShowDrawer()} type="text" icon={<CommentOutlined style={{fontSize: 22, color: theme?.colors.contentPrimary}} />}/>
           </Space>
         </div>
+        <ChatDrawer
+          messageList={props.messageList}
+          selectKnowledgeList={props?.selectKnowledgeList}
+          showDrawer={props.showDrawer}
+          submitLoading={props.submitLoading}
+          onCloseDrawer={props.onCloseDrawer}
+          onSendMessage={props.onSendMessage}
+        />
       </div>
     </ConfigProvider>
   );
 }
 
-export default QuickHeader;
+export default Header;

@@ -1,9 +1,10 @@
 // @ts-nocheck
-import { LikeOutlined, MessageOutlined, StarOutlined, PlusOutlined } from '@ant-design/icons';
+import { ClearOutlined, MessageOutlined, StarOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
-import { ConfigProvider, FloatButton } from 'antd';
-import request from 'umi-request';
+import { Button, ConfigProvider, Popconfirm } from "antd";
 import React, { useState } from 'react';
+
+import { IKnowledgeContent, IKnowledge } from "../index"
 import { useTheme } from "../../../../hooks/useTheme";
 
 const IconText = ({ icon, text }: { icon: any; text: string }) => (
@@ -13,90 +14,68 @@ const IconText = ({ icon, text }: { icon: any; text: string }) => (
   </span>
 );
 
-const dataSource = [
-  {
-    title: '语雀的天空',
-  },
-  {
-    title: 'Ant Design',
-  },
-  {
-    title: '蚂蚁金服体验科技',
-  },
-  {
-    title: 'TechUI',
-  },
-];
+interface IContentProps {
+  knowledgeContent?: IKnowledgeContent;
+  onPageChange: (page: number) => void;
+  onKnowledgeIdsChange: (knowledgeIds: string[]) => void;
+  onStartKnowLedgeChat: (knowledgeIds?: string[]) => void;
+  onDeleteKnowledge: (id: string) => void;
+}
 
-export default () => {
+export default (props: IContentProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const rowSelection = {
     selectedRowKeys,
-    onChange: (keys: any) => setSelectedRowKeys(keys),
+    onChange: (keys: any) => {
+      setSelectedRowKeys(keys)
+      props.onKnowledgeIdsChange(keys)
+    },
   };
   const { theme, themeType } = useTheme()
+
+  const handleChatWithOne = (record: IKnowledge) => {
+    setSelectedRowKeys([record.knowledge_id])
+    props.onStartKnowLedgeChat([record.knowledge_id])
+  }
   return (
     <ConfigProvider
       theme={{
         token: {
           colorText: themeType == "dark"? theme?.colors.contentInverseSecondary : theme?.colors.contentSecondary,
-          colorPrimary: themeType == "dark"? theme?.colors.contentInversePrimary : theme?.colors.contentPrimary,
+          colorPrimary: themeType == "dark"? theme?.colors.contentInversePrimary : theme?.colors.contentInverseTertiary,
           colorBgBase: themeType == "dark"? theme?.colors.backgroundInverseSecondary : undefined,
         },
       }}
     >
       <ProList
         itemLayout="vertical"
-        rowKey="id"
-        dataSource={dataSource}
+        rowKey="knowledge_id"
+        dataSource={props?.knowledgeContent?.knowledge_list}
         showActions="hover"
         grid={{ gutter: 16, column: 1 }}
         rowSelection={rowSelection}
         pagination={{
-          defaultPageSize: 8,
+          total: props?.knowledgeContent?.total,
+          defaultPageSize: 10,
           showSizeChanger: true,
-        }}
-        onItem={(record: any) => {
-          return {
-            onMouseEnter: () => {
-              console.log(record);
-            },
-            onClick: () => {
-              console.log(record);
-            },
-          };
+          onChange: (page) => {
+            props.onPageChange(page);
+          },
         }}
         metas={{
           title: {},
           actions: {
-            render: () => [
-              <IconText
-                icon={StarOutlined}
-                text="156"
-                key="list-vertical-star-o"
-              />,
-              <IconText
-                icon={LikeOutlined}
-                text="156"
-                key="list-vertical-like-o"
-              />,
-              <IconText
-                icon={MessageOutlined}
-                text="2"
-                key="list-vertical-message"
-              />,
+            render: (_, record) => [
+              <Button type="text" onClick={() => handleChatWithOne(record)} size="small" icon={<MessageOutlined style={{fontSize: 18}} />} />,
+              <>{record.knowledge_type === 1 && (
+                <Popconfirm title="删除知识" description="您确认要删除该知识库吗？" onConfirm={() => props?.onDeleteKnowledge(record.knowledge_id)}>
+                  <Button type="text" size="small" icon={<ClearOutlined style={{fontSize: 18}} />} />
+                </Popconfirm>
+              )}</>,
             ],
           },
           content: {
-            render: () => {
-              return (
-                <div>
-                  段落示意：蚂蚁金服设计平台
-                  design.alipay.com，用最小的工作量，无缝接入蚂蚁金服生态，提供跨越设计与开发的体验解决方案。蚂蚁金服设计平台
-                  design.alipay.com，用最小的工作量，无缝接入蚂蚁金服生态提供跨越设计与开发的体验解决方案。
-                </div>
-              );
-            },
+            render: (_, record) => <span>{record.description}</span>,
           },
         }}
       />

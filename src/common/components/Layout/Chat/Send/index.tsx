@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {SendOutlined} from '@ant-design/icons'
 import { Button, Mentions } from 'antd';
-import { Theme } from "baseui-sd/theme";
 
 import './index.scss'
+import { useTheme } from "../../../../hooks/useTheme";
 
 interface Item {
   key: string;
@@ -12,7 +12,6 @@ interface Item {
 }
 
 interface ISendProps{
-  theme?: Theme;
   onSendMessage: (prompt: string) => void;
   onSubmitting: boolean;
   text?: string
@@ -22,6 +21,7 @@ function Send(props: ISendProps) {
   const [originalText, setOriginalText] = useState(props.text)
   const [helpPrompts, setHelpPrompts] = useState( [])
   const [matchedData, setMatchedData] = useState<Item[]>([]);
+  const { theme, themeType } = useTheme()
 
   useEffect(() => {
     setOriginalText(props.text)
@@ -75,13 +75,13 @@ function Send(props: ISendProps) {
         style={{
           border: 'none',
           boxShadow: 'none',
-          background: props.theme?.colors.backgroundSecondary,
-          color: props.theme?.colors.contentPrimary,
+          background: theme.colors.backgroundSecondary,
+          color: theme.colors.contentPrimary,
         }}
         onSearch={onSearch}
         onSelect={(record: any, prefix) => onSelect(record.value, prefix)}
         onChange={(value) => onInputChange(value)}
-        placeholder="来说点什么吧...（Ctrl + Enter = 发送），输入 / 查看更多推荐"
+        placeholder="来说点什么吧...(Ctrl+Enter=发送),输入 / 查看更多推荐"
         autoFocus
         autoSize={{maxRows: 4 }}
         value={originalText}
@@ -93,11 +93,11 @@ function Send(props: ISendProps) {
         className="send"
         size="small"
         type={originalText?.trim() === "" ? "default" : "primary"}
-        icon={<SendOutlined style={props.onSubmitting ? {color: props.theme?.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />}
+        icon={<SendOutlined style={props.onSubmitting ? {color: theme.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />}
         loading={props.onSubmitting}
         style={{
-          background: originalText?.trim() === "" ? props.theme?.colors.backgroundSecondary: props.theme?.colors.backgroundInversePrimary,
-          color: originalText?.trim() === "" ? props.theme?.colors.contentPrimary: props.theme?.colors.contentInversePrimary,
+          background: originalText?.trim() === "" ? theme.colors.backgroundSecondary: theme.colors.backgroundInversePrimary,
+          color: originalText?.trim() === "" ? theme.colors.contentPrimary: theme.colors.contentInversePrimary,
         }}
         onClick={async () => await handleUserPrompt(originalText || "")}
       />
