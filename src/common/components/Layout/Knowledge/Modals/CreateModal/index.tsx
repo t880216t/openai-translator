@@ -41,7 +41,7 @@ export default (props: ICreateModalProps) => {
       }}
     >
       <ModalForm<IFormProps>
-        title="保存会话"
+        title="创建知识库"
         open={props.showModal}
         form={form}
         autoFocusFirstInput
@@ -72,7 +72,8 @@ export default (props: ICreateModalProps) => {
           }}
           name="knowledgeType"
           label="知识库类型"
-          options={[{label: '私有知识库', value: '1'}, {label: '公共知识库', value: '2'}]}
+          tooltip="管理员可以上至传公共知识库"
+          options={[{label: '私有知识库', value: '1'}, {label: '公共知识库', value: '2', disabled: true}]}
         />
         <ProFormText
           width="md"
@@ -93,7 +94,7 @@ export default (props: ICreateModalProps) => {
           }}
           name="dataType"
           label="知识库类型"
-          options={[{label: '本地文件', value: 'file'}, {label: '网络链接', value: 'link'}]}
+          options={[{label: '文件', value: 'file'}, {label: '链接', value: 'link'}]}
         />
         <ProFormDependency name={['dataType']}>
           {({ dataType }) => {
@@ -109,7 +110,7 @@ export default (props: ICreateModalProps) => {
             }
             return (
               <ProFormUploadButton
-                extra="支持扩展名：.docx .pdf"
+                extra="支持扩展名：.docx .pdf .html .zip .py .eml .csv"
                 label="数据文件"
                 name="file"
                 title="上传文件"

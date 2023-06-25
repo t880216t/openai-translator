@@ -1,20 +1,23 @@
 import React from "react";
-import { Button, Avatar, Tooltip } from "antd";
+import { Button, Avatar, Tooltip, Space } from "antd";
 import { CopyOutlined, UserOutlined, DeleteOutlined } from '@ant-design/icons'
 import { CopyButton } from '@mantine/core';
 import { useTheme } from "../../../../../hooks/useTheme";
+import { getIcon } from "../../../../../assets/icon_utils";
 
 // @ts-ignore
 import ChatGPTLogo from './ChatGPT_logo.svg';
 import { Markdown } from './markdown'
-import { IMessage } from '../../../types'
+import { IMessage, ISource } from '../../../types'
 import Cursor from "./Cursor"
 
 import "./index.scss"
+import { IKnowledge } from "../../../Knowledge";
 
 interface IMessageProps extends IMessage {
   messageId: string
   isMe: boolean
+  sources?: ISource[]
   onSubmitting: boolean
   needShowThinking?: boolean
   onDelete?: (messageId: string) => void
@@ -45,17 +48,33 @@ function Message(props: IMessageProps) {
           {props.needShowThinking ? <Cursor /> : <Markdown submitState={props.onSubmitting} content={props.content || ''} />}
         </div>
         <div className="action-wrap">
-          <CopyButton value={props.content || ''}>
-            {({ copy }) => (
-              <Tooltip title="复制">
-                <Button onClick={copy} type="text" icon={<CopyOutlined style={{color: '#b3b3ba'}} />} />
+          <div className="sources">
+            <Space>
+              {props.sources?.map((item: ISource, index) => (
+                <Tooltip
+                  key={`${item.source}_${index}`}
+                  title={
+                    <pre className="pre-content">{item.content}</pre>
+                  }
+                >
+                  <Button type="text" icon={<img src={getIcon(item.source)} style={{width: 20, height: 20}} />} />
+                </Tooltip>
+              ))}
+            </Space>
+          </div>
+          <div className="action">
+            <CopyButton value={props.content || ''}>
+              {({ copy }) => (
+                <Tooltip title="复制">
+                  <Button onClick={copy} type="text" icon={<CopyOutlined style={{color: '#b3b3ba'}} />} />
+                </Tooltip>
+              )}
+            </CopyButton>
+            <div>
+              <Tooltip title="删除">
+                <Button onClick={handleDelete} type="text" icon={<DeleteOutlined style={{color: '#b3b3ba'}} />} />
               </Tooltip>
-            )}
-          </CopyButton>
-          <div>
-            <Tooltip title="删除">
-              <Button onClick={handleDelete} type="text" icon={<DeleteOutlined style={{color: '#b3b3ba'}} />} />
-            </Tooltip>
+            </div>
           </div>
         </div>
       </div>

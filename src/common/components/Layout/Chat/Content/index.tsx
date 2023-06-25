@@ -48,6 +48,7 @@ function Messages(props: IMessagesProps) {
             messageId={key}
             isMe={props.messageList[key].role=="user"}
             content={props.messageList[key].content}
+            sources={props.messageList[key]?.sources}
           />
         )
       })}

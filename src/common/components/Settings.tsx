@@ -1043,7 +1043,7 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
     return (
         <div
             style={{
-                paddingTop: isDesktopApp ? '28px' : undefined,
+                paddingTop: isDesktopApp ? '98px' : undefined,
                 paddingBottom: isDesktopApp ? '22px' : undefined,
                 background: theme.colors.backgroundPrimary,
                 width: "100%"

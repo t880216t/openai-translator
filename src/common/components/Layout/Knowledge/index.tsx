@@ -44,7 +44,7 @@ export interface IKnowledgeResponse {
   msg: string
 }
 
-function QuickComponent(props: IQuickProps) {
+function knowledgeComponent(props: IQuickProps) {
   const [knowledgeContent, setKnowledgeContent] = useState<IKnowledgeContent>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -71,7 +71,7 @@ function QuickComponent(props: IQuickProps) {
     }else {
       setSelectKnowledgeList([])
     }
-
+    setMessageList({})
   }, [knowledgeIds])
 
   const handleShowCreateModal = () => {
@@ -85,6 +85,11 @@ function QuickComponent(props: IQuickProps) {
       notice.success("创建成功");
       setShowCreateModal(false);
       setSubmitLoading(false);
+      queryKnowledgeList({listType}).then((res) => {
+        if (res.code == 0) {
+          setKnowledgeContent(res.content);
+        }
+      })
     }).catch(() => {
       notice.error("创建失败");
       setSubmitLoading(false);
@@ -126,18 +131,31 @@ function QuickComponent(props: IQuickProps) {
       createAt: new Date().getTime(),
     };
 
+    // 格式化历史消息，将role为user的消息格式化Human: + content，将role为bot的消息格式化为Assistant: + content，拼接叠加为一个完整的chatHistory字段：
+    let chatHistory = "";
+    Object.keys(messageList).forEach((key) => {
+      const item = messageList[key];
+      if (item.role === "user") {
+        chatHistory += `Human: ${item.content}\n`;
+      } else {
+        chatHistory += `Assistant: ${item.content}\n`;
+      }
+    });
+
     setSubmitLoading(true);
     setMessageList(prevMessageList => ({...prevMessageList, [userMessageId]: userMessage}));
 
     try {
-      const res = await queryKnowledgeChat({ question, knowledgeIds });
+      const res = await queryKnowledgeChat({ question, knowledgeIds, chatHistory });
       const message = res.content;
+      const sources = res.sources;
       setSubmitLoading(false);
       const botMessageId = uuidv4().replace(/-/g, '');
       const botMessage = {
         role: "bot",
         messageId: botMessageId,
         content: "",
+        sources: sources,
         createAt: new Date().getTime(),
       };
 
@@ -228,4 +246,4 @@ function QuickComponent(props: IQuickProps) {
   );
 }
 
-export default QuickComponent;
+export default knowledgeComponent;

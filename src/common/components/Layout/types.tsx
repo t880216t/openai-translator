@@ -13,11 +13,16 @@ export interface IInnerProps {
   onMessageResult?: (message: IMessage) => void
 }
 
+export interface ISource {
+  source: string,
+  content: string,
+}
 
 export interface IMessage {
   role?: string,
   messageId: string,
   content: string,
+  sources?: ISource[],
   createAt?: number,
 }
 

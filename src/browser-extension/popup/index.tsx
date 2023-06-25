@@ -5,6 +5,8 @@ import '../../common/i18n.js'
 import './index.css'
 import { PREFIX } from '../../common/constants'
 import { useTheme } from '../../common/hooks/useTheme'
+import ToolWarp from "../../common/components/ToolWarp";
+import React from "react/index";
 
 const engine = new Styletron({
     prefix: `${PREFIX}-styletron-`,
@@ -18,12 +20,19 @@ function App() {
     return (
         <div
             style={{
-                position: 'relative',
+                position: 'absolute',
                 minHeight: '100vh',
                 background: theme.colors.backgroundPrimary,
             }}
         >
-            <Translator showSettings defaultShowSettings text='' engine={engine} autoFocus />
+            {/*<Translator showSettings defaultShowSettings text='' engine={engine} autoFocus />*/}
+          <ToolWarp
+            text=""
+            engine={engine}
+            autoFocus
+            showSettings
+            defaultShowSettings
+          />
         </div>
     )
 }

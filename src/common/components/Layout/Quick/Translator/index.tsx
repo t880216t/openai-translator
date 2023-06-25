@@ -1086,7 +1086,9 @@ function InnerTranslator(props: IInnerTranslatorProps) {
           return
         }
 
-        const worker = createWorker()
+        const worker = createWorker({
+          langPath: '/tessdata/4.0.0'
+        })
 
         const binaryFile = await fs.readBinaryFile(filePath)
 
@@ -1117,7 +1119,9 @@ function InnerTranslator(props: IInnerTranslatorProps) {
   }, [])
 
   const onDrop = async (acceptedFiles: File[]) => {
-    const worker = createWorker()
+    const worker = createWorker({
+      langPath: '/tessdata/4.0.0'
+    })
 
     setOriginalText('')
     setIsOCRProcessing(true)
@@ -1586,7 +1590,7 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                         alignItems: 'center',
                         paddingTop:
                           editableText && editableText !== detectedOriginalText ? 8 : 0,
-                        height: editableText && editableText !== detectedOriginalText ? 28 : 0,
+                        height: editableText && editableText !== detectedOriginalText ? undefined : 0,
                         transition: 'all 0.3s linear',
                         overflow: 'hidden',
                       }}
@@ -1610,6 +1614,7 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                             fontSize: '12px',
                             transform: 'scale(0.9)',
                             marginRight: '-20px',
+                            flex: 5,
                           }}
                         >
                           {
@@ -1640,6 +1645,7 @@ function InnerTranslator(props: IInnerTranslatorProps) {
                                 fontWeight: 'normal',
                                 fontSize: '12px',
                                 padding: '4px 8px',
+                                flex: 1,
                               },
                             },
                           }}

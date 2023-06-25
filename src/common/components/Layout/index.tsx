@@ -65,7 +65,16 @@ function  BaseComponent(props: IBaseProps) {
         <Quick isShow={activeKey == "quick"} theme={theme} {...props} engine={props.engine} />
         <Knowledge showSetting={showSetting} isShow={activeKey == "knowledge"} theme={theme} {...props} engine={props.engine} />
       </div>
-      <div className="footer" style={{background: theme.colors.backgroundSecondary}}>
+      {showSetting && (
+        <Settings
+          engine={props.engine}
+          onSave={(oldSettings) => {
+            setShowSetting(false)
+            props.onSettingsSave?.(oldSettings)
+          }}
+        />
+      )}
+      <div className="footer" style={{background: theme.colors.backgroundSecondary, display: showSetting? "none": undefined}}>
         <Tabs
           size="small"
           onChange={handleActionModelChange}
@@ -79,15 +88,6 @@ function  BaseComponent(props: IBaseProps) {
           }}
         />
       </div>
-      {showSetting && (
-        <Settings
-          engine={props.engine}
-          onSave={(oldSettings) => {
-            setShowSetting(false)
-            props.onSettingsSave?.(oldSettings)
-          }}
-        />
-      )}
     </div>
   );
 }

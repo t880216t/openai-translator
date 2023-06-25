@@ -32,10 +32,27 @@
       display: flex;
       width: 100%;
       flex-direction: row;
-      justify-content: flex-end;
-      align-items: flex-end;
+      justify-content: space-between;
+      align-items: center;
+      .sources{
+        display: flex;
+        flex-direction: row;
+        flex: 3;
+      }
+      .action{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        flex: 2
+      }
     }
   }
+}
+.pre-content{
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  max-height: 300px;
 }
 .me{
   padding: 1rem;
