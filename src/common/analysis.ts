@@ -6,7 +6,7 @@ export async function setupAnalysis() {
     if (isUserscript()) {
         return
     }
-    doSetupAnalysis()
+    // doSetupAnalysis()
 }
 
 let isAnalysisSetupped = false

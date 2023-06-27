@@ -1101,7 +1101,7 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
                 </FormItem>
                 {values.provider !== 'ChatGPT' && (
                     <FormItem
-                        required
+                        // required
                         name='apiKeys'
                         label={t('API Key')}
                         caption={
@@ -1221,15 +1221,15 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
                 <FormItem name='ocrHotkey' label={t('OCR Hotkey')}>
                     <HotkeyRecorder onBlur={onBlur} />
                 </FormItem>
-                <FormItem
-                    style={{
-                        display: isDesktopApp ? 'block' : 'none',
-                    }}
-                    name='disableCollectingStatistics'
-                    label={t('disable collecting statistics')}
-                >
-                    <MyCheckbox onBlur={onBlur} />
-                </FormItem>
+                {/*<FormItem*/}
+                {/*    style={{*/}
+                {/*        display: isDesktopApp ? 'block' : 'none',*/}
+                {/*    }}*/}
+                {/*    name='disableCollectingStatistics'*/}
+                {/*    label={t('disable collecting statistics')}*/}
+                {/*>*/}
+                {/*    <MyCheckbox onBlur={onBlur} />*/}
+                {/*</FormItem>*/}
                 <div
                     style={{
                         display: 'flex',

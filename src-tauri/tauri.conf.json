@@ -29,7 +29,8 @@
       "http": {
         "all": false,
         "scope": [
-          "https://api.openapi.com/*"
+          "https://api.openapi.com/*",
+          "https://oldboy.run/*"
         ]
       },
       "notification": {
