@@ -36,6 +36,9 @@
       "notification": {
         "all": true
       },
+      "os": {
+        "all": true
+      },
       "fs": {
         "all": false,
         "scope": ["**", "$CONFIG/*/**", "$APPDATA/databases/*"],
@@ -53,7 +56,9 @@
         "all": true
       },
       "dialog": {
-        "all": false,
+        "open": true,
+        "save": true,
+        "ask": true,
         "message": true
       }
     },
@@ -78,7 +83,7 @@
       "identifier": "xyz.yetone.apps.openai-translator",
       "longDescription": "",
       "macOS": {
-        "entitlements": null,
+        "entitlements": "entitlements.mac.plist",
         "exceptionDomain": "",
         "frameworks": [],
         "providerShortName": null,

@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { ClearOutlined, MessageOutlined, StarOutlined, PlusOutlined } from '@ant-design/icons';
+import { ClearOutlined, MessageOutlined, PullRequestOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
-import { Button, ConfigProvider, Popconfirm } from "antd";
+import { Button, ConfigProvider, Popconfirm, Tooltip } from "antd";
 import React, { useState } from 'react';
 
 import { IKnowledgeContent, IKnowledge } from "../index"
@@ -66,10 +66,19 @@ export default (props: IContentProps) => {
           title: {},
           actions: {
             render: (_, record) => [
-              <Button type="text" onClick={() => handleChatWithOne(record)} size="small" icon={<MessageOutlined style={{fontSize: 18}} />} />,
+              <>{record.knowledge_type === 1 && (
+                <Tooltip title="分享为公共知识，功能未开放，尽情期待。">
+                  <Button type="text" size="small" icon={<PullRequestOutlined style={{fontSize: 18}} />} />
+                </Tooltip>
+              )}</>,
+              <Tooltip title="基于知识库会话">
+                <Button type="text" onClick={() => handleChatWithOne(record)} size="small" icon={<MessageOutlined style={{fontSize: 18}} />} />
+              </Tooltip>,
               <>{record.knowledge_type === 1 && (
                 <Popconfirm title="删除知识" description="您确认要删除该知识库吗？" onConfirm={() => props?.onDeleteKnowledge(record.knowledge_id)}>
-                  <Button type="text" size="small" icon={<ClearOutlined style={{fontSize: 18}} />} />
+                  <Tooltip title="删除知识">
+                    <Button type="text" size="small" icon={<ClearOutlined style={{fontSize: 18}} />} />
+                  </Tooltip>
                 </Popconfirm>
               )}</>,
             ],

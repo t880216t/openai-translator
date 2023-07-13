@@ -9,6 +9,8 @@ import { Settings } from '../Settings'
 import Chat from "./Chat"
 import Quick from "./Quick"
 import Knowledge from "./Knowledge"
+// import Meeting from "./Meeting"
+// import Speech from "./Meeting/Speech"
 
 import "./index.scss"
 import { IInnerProps } from './types';
@@ -38,6 +40,12 @@ function  BaseComponent(props: IBaseProps) {
     }
   }, []);
 
+  useEffect(() => {
+    if (props.text && activeKey == "knowledge"){
+      setActiveKey("quick");
+    }
+  }, [props.text]);
+
   const handleActionModelChange = (value: string) => {
     setActiveKey(value);
     localStorage.setItem("_actionModel", JSON.stringify({actionModel: value}));
@@ -56,6 +64,11 @@ function  BaseComponent(props: IBaseProps) {
       key: 'knowledge',
       label: `知识库`,
     },
+    // {
+    //   key: 'meeting',
+    //   // disabled: true,
+    //   label: `会议记录员`,
+    // },
   ];
 
   return (
@@ -64,6 +77,7 @@ function  BaseComponent(props: IBaseProps) {
         <Chat isShow={activeKey == "chat"} theme={theme} {...props} />
         <Quick isShow={activeKey == "quick"} theme={theme} {...props} engine={props.engine} />
         <Knowledge showSetting={showSetting} isShow={activeKey == "knowledge"} theme={theme} {...props} engine={props.engine} />
+        {/*<Speech isShow={activeKey == "meeting"} theme={theme} {...props} engine={props.engine} />*/}
       </div>
       {showSetting && (
         <Settings
