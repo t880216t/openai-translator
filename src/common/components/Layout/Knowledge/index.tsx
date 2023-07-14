@@ -81,19 +81,33 @@ function knowledgeComponent(props: IQuickProps) {
   // @ts-ignore
   const handleCreateKnowledge = async (values) => {
     setSubmitLoading(true);
-    queryKnowledgeCreate(values).then(() => {
-      notice.success("创建成功");
-      setShowCreateModal(false);
-      setSubmitLoading(false);
-      queryKnowledgeList({listType}).then((res) => {
-        if (res.code == 0) {
-          setKnowledgeContent(res.content);
-        }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = reader.result as string;
+      queryKnowledgeCreate({
+        fileName: values?.file.name,
+        fileData: dataUrl,
+        knowledgeType: values?.knowledgeType,
+        dataType: values?.dataType,
+        description: values?.description,
+        link: values?.link,
+        name: values?.name,
+      }).then(() => {
+        notice.success("创建成功");
+        setShowCreateModal(false);
+        setSubmitLoading(false);
+        queryKnowledgeList({listType}).then((res) => {
+          if (res.code == 0) {
+            setKnowledgeContent(res.content);
+          }
+        })
+      }).catch(() => {
+        notice.error("创建失败");
+        setSubmitLoading(false);
       })
-    }).catch(() => {
-      notice.error("创建失败");
-      setSubmitLoading(false);
-    })
+    };
+    reader.readAsDataURL(values.file);
   }
 
   const handlePageChange = async (page: number) => {

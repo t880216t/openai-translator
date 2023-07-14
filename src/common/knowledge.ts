@@ -49,14 +49,11 @@ export async function queryKnowledgeRemove(params: any) {
 }
 
 export async function queryKnowledgeCreate(params: any) {
-    const formData = new FormData();
-    for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-            formData.append(key, params[key]);
-        }
-    }
     return request(`/api/knowledge/create`, {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify(params),
+        headers: {
+            'Content-Type': 'application/json',
+        },
     });
 }

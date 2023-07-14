@@ -6,10 +6,11 @@ interface IHeaderProps {
 }
 
 import "./index.scss";
+import { isDesktopApp } from "../../../../utils";
 
 function QuickHeader(props: IHeaderProps) {
   return (
-    <div className="header-wrap">
+    <div style={{marginTop: isDesktopApp() ? 10 : "0px"}} className="header-wrap">
       <div className="title" style={{color: props.theme?.colors?.contentPrimary}}>
         <span>Quick Functions</span>
       </div>

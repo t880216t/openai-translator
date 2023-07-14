@@ -7,6 +7,7 @@ import "./index.scss";
 import { useTheme } from "../../../../hooks/useTheme";
 import { IKnowledge } from "../index";
 import { IMessage } from '../../types'
+import { isDesktopApp } from "../../../../utils";
 
 interface IHeaderProps {
   listType: string;
@@ -38,7 +39,7 @@ function Header(props: IHeaderProps) {
         },
       }}
     >
-      <div className="header-wrap">
+      <div style={{marginTop: isDesktopApp() ? 10 : "0px"}} className="header-wrap">
         <div className="title" style={{color: theme?.colors?.contentPrimary}}>
           <span>K-DB</span>
         </div>

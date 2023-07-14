@@ -180,8 +180,6 @@ const useStyles = createUseStyles({
     'flexShrink': 0,
     'flexDirection': 'row',
     'alignItems': 'center',
-    'padding': '5px 10px',
-    'gap': '10px',
     '@media screen and (max-width: 460px)': {
       padding: props.isDesktopApp ? '5px 0' : undefined,
       gap: props.isDesktopApp ? '5px' : undefined,

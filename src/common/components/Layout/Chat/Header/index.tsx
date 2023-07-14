@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Space, Tooltip, Popconfirm, ConfigProvider } from "antd";
 import {HistoryOutlined, SaveOutlined, SyncOutlined, FileExcelOutlined} from '@ant-design/icons';
 import { Theme } from 'baseui-sd/theme'
+import { isDesktopApp } from "../../../../utils";
 
 interface IHeaderProps {
   onClearMessage?: () => void
@@ -26,7 +27,7 @@ function ChatHeader(props: IHeaderProps) {
         },
       }}
     >
-      <div className="header-wrap">
+      <div style={{marginTop: isDesktopApp() ? 10 : "0px"}} className="header-wrap">
         <div className="title" style={{color: props.theme?.colors?.contentPrimary}}>
           <span>{props.title || "New Session"}</span>
         </div>
