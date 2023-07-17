@@ -177,7 +177,7 @@ function knowledgeComponent(props: IQuickProps) {
 
       // 逐个字地输出文本
       for (let i = 0; i < message.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 50)); // 延迟100毫秒
+        await new Promise(resolve => setTimeout(resolve, 20)); // 延迟100毫秒
         setMessageList(prevMessageList => ({
           ...prevMessageList,
           [botMessageId]: {...botMessage, content: message.slice(0, i + 1)}

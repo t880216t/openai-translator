@@ -260,6 +260,7 @@ const useStyles = createUseStyles({
     marginTop: '-14px',
     display: 'flex',
     overflowY: 'auto',
+    maxHeight: '30vh',
     color: props.themeType === 'dark' ? props.theme.colors.contentSecondary : props.theme.colors.contentPrimary,
   }),
   'errorMessage': {
