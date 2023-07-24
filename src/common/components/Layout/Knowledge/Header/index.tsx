@@ -18,6 +18,7 @@ interface IHeaderProps {
   selectKnowledgeList: IKnowledge[]
   onCloseDrawer: () => void
   onDelete: (id: string) => void
+  onDownload: (id: string, fileName: string) => void
   onSendMessage: (prompt: string) => void
   messageList: {[key: string]: IMessage}
 }
@@ -62,6 +63,7 @@ function Header(props: IHeaderProps) {
           onCloseDrawer={props.onCloseDrawer}
           onSendMessage={props.onSendMessage}
           onDelete={props.onDelete}
+          onDownload={props.onDownload}
         />
       </div>
     </ConfigProvider>

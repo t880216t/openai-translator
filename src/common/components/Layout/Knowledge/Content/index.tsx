@@ -15,10 +15,12 @@ const IconText = ({ icon, text }: { icon: any; text: string }) => (
 );
 
 interface IContentProps {
+  listType: string;
   knowledgeContent?: IKnowledgeContent;
   onPageChange: (page: number) => void;
   onKnowledgeIdsChange: (knowledgeIds: string[]) => void;
   onStartKnowLedgeChat: (knowledgeIds?: string[]) => void;
+  onShareKnowLedge: (knowledgeId: string) => void;
   onDeleteKnowledge: (id: string) => void;
 }
 
@@ -36,6 +38,10 @@ export default (props: IContentProps) => {
   const handleChatWithOne = (record: IKnowledge) => {
     setSelectedRowKeys([record.knowledge_id])
     props.onStartKnowLedgeChat([record.knowledge_id])
+  }
+
+  const handleShare =  (record: IKnowledge) => {
+    props.onShareKnowLedge(record.knowledge_id)
   }
   return (
     <ConfigProvider
@@ -66,15 +72,15 @@ export default (props: IContentProps) => {
           title: {},
           actions: {
             render: (_, record) => [
-              <>{record.knowledge_type === 1 && (
+              <>{(props.listType === '1' && record.knowledge_type === 1) && (
                 <Tooltip title="分享为公共知识，功能未开放，尽情期待。">
-                  <Button type="text" size="small" icon={<PullRequestOutlined style={{fontSize: 18}} />} />
+                  <Button type="text" size="small" onClick={() => handleShare(record)} icon={<PullRequestOutlined style={{fontSize: 18}} />} />
                 </Tooltip>
               )}</>,
               <Tooltip title="基于知识库会话">
                 <Button type="text" onClick={() => handleChatWithOne(record)} size="small" icon={<MessageOutlined style={{fontSize: 18}} />} />
               </Tooltip>,
-              <>{record.knowledge_type === 1 && (
+              <>{props.listType === '1' && (
                 <Popconfirm title="删除知识" description="您确认要删除该知识库吗？" onConfirm={() => props?.onDeleteKnowledge(record.knowledge_id)}>
                   <Tooltip title="删除知识">
                     <Button type="text" size="small" icon={<ClearOutlined style={{fontSize: 18}} />} />

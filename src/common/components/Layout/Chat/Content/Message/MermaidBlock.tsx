@@ -110,7 +110,6 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
       const file_name = `mermaid_${Date.now()}.png`;
 
       const download_dir = await downloadDir();
-      console.log(download_dir);
       const uint8Array = new Uint8Array(bufferData);
       await writeBinaryFile(file_name, uint8Array, { dir: BaseDirectory.Download });
       message.success(`图片已保存至：${download_dir}${file_name}`, 5)

@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Button, Empty, message as notice, FloatButton } from "antd";
+import { Layout, Button, Empty, message as notice, FloatButton, message } from "antd";
 import { Theme } from "baseui-sd/theme";
 import { Client as Styletron } from "styletron-engine-atomic";
-import { queryKnowledgeList, queryKnowledgeCreate, queryKnowledgeChat, queryKnowledgeRemove } from "../../../knowledge";
+import {
+  queryKnowledgeList,
+  queryKnowledgeCreate,
+  queryKnowledgeChat,
+  queryKnowledgeShare,
+  queryKnowledgeRemove,
+  queryKnowledgeFileDownload,
+} from "../../../knowledge";
 
 import _Header from "./Header"
 import _Content from "./Content"
@@ -11,6 +18,8 @@ import CreateModal from "./Modals/CreateModal"
 import "./index.scss"
 import { PlusOutlined } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
+import { downloadDir } from "@tauri-apps/api/path";
+import { BaseDirectory, writeBinaryFile } from "@tauri-apps/api/fs";
 
 const { Header, Content } = Layout;
 
@@ -136,6 +145,16 @@ function knowledgeComponent(props: IQuickProps) {
     setShowDrawer(true)
   }
 
+  const handleShareKnowledge = (knowledgeId: string) => {
+    queryKnowledgeShare({knowledgeId}).then((res) => {
+      if (res.code == 0) {
+        notice.success("分享成功");
+      } else {
+        notice.error("分享失败");
+      }
+    })
+  }
+
   const handleSendMessage = async (question: string) => {
     const userMessageId = uuidv4().replace(/-/g, '');
     const userMessage = {
@@ -195,6 +214,21 @@ function knowledgeComponent(props: IQuickProps) {
     setMessageList(newMessageList);
   }
 
+  const handleDownloadFile = (knowledgeId: string, fileName: string) => {
+    queryKnowledgeFileDownload({knowledgeId}).then(async (res) => {
+      try {
+        const download_dir = await downloadDir();
+        const uint8Array = new Uint8Array(res);
+        const save_name = `${new Date().getTime().toString()}_${fileName}`
+        await writeBinaryFile(save_name, res, { dir: BaseDirectory.Download });
+        message.success(`文件已保存至：${download_dir}${save_name}` )
+      } catch (error) {
+        console.error('Failed to save :', error);
+        message.error('保存失败')
+      }
+    })
+  }
+
   const handleDeleteKnowledge = (knowledgeId: string) => {
     queryKnowledgeRemove({knowledgeId}).then((res) => {
       if (res.code == 0) {
@@ -223,15 +257,18 @@ function knowledgeComponent(props: IQuickProps) {
             submitLoading={submitLoading}
             onCloseDrawer={() => setShowDrawer(false)}
             onDelete={handleDeleteMessage}
+            onDownload={handleDownloadFile}
             onSendMessage={handleSendMessage}
           />
         </Header>
         <Content style={{background: props.theme?.colors.backgroundSecondary, overflowY: 'auto'}}>
           <_Content
+            listType={listType}
             knowledgeContent={knowledgeContent}
             onPageChange={handlePageChange}
             onKnowledgeIdsChange={handleKnowledgeIdsChange}
             onStartKnowLedgeChat={handleStartKnowLedgeChat}
+            onShareKnowLedge={handleShareKnowledge}
             onDeleteKnowledge={handleDeleteKnowledge}
           />
         </Content>

@@ -18,6 +18,7 @@ interface IDrawerProps {
   submitLoading: boolean;
   onCloseDrawer: () => void;
   onDelete: (id: string) => void;
+  onDownload: (id: string, fileName:string) => void;
   onSendMessage: (prompt: string) => void;
   messageList: {[key: string]: IMessage}
 }
@@ -54,7 +55,7 @@ function BasicComponent(props: IDrawerProps) {
             <Space>
               {props.selectKnowledgeList?.map((item: IKnowledge) => (
                 <Tooltip title={item.title}>
-                  <Button key={item.knowledge_id} type="text" icon={<img src={item.data_type == 2? getIcon("link") :getIcon(item.file_name)} style={{width: 20, height: 20}} />} />
+                  <Button key={item.knowledge_id} onClick={() => item.data_type === 1  && props.onDownload(item.knowledge_id, item.file_name)} type="text" icon={<img src={item.data_type == 2? getIcon("link") :getIcon(item.file_name)} style={{width: 20, height: 20}} />} />
                 </Tooltip>
               ))}
             </Space>
