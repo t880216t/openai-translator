@@ -179,6 +179,16 @@ function knowledgeComponent(props: IQuickProps) {
 
     try {
       const res = await queryKnowledgeChat({ question, knowledgeIds, chatHistory });
+      if (!res){
+        setSubmitLoading(false);
+        notice.error(res.msg);
+        return
+      }
+      if (res && res.code != 0) {
+        setSubmitLoading(false);
+        notice.error(res.msg);
+        return
+      }
       const message = res.content;
       const sources = res.sources;
       setSubmitLoading(false);
