@@ -164,7 +164,6 @@ function knowledgeComponent(props: IQuickProps) {
       createAt: new Date().getTime(),
     };
 
-    // 格式化历史消息，将role为user的消息格式化Human: + content，将role为bot的消息格式化为Assistant: + content，拼接叠加为一个完整的chatHistory字段：
     let chatHistory = "";
     Object.keys(messageList).forEach((key) => {
       const item = messageList[key];
@@ -194,12 +193,20 @@ function knowledgeComponent(props: IQuickProps) {
 
       setMessageList(prevMessageList => ({...prevMessageList, [botMessageId]: botMessage}));
 
-      // 逐个字地输出文本
-      for (let i = 0; i < message.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 20)); // 延迟100毫秒
+      // 以空格作为分隔符，逐个字地输出文本
+      const words = message.split(' '); // 将原始文本按空格分隔成单词数组
+
+      for (let i = 0; i < words.length; i++) {
+        const currentWord = words[i];
+
+        await new Promise(resolve => setTimeout(resolve, 100)); // 延迟100毫秒
+
+        // 将当前单词以及之前的单词重新组成字符串
+        const currentSentence = words.slice(0, i + 1).join(' ');
+
         setMessageList(prevMessageList => ({
           ...prevMessageList,
-          [botMessageId]: {...botMessage, content: message.slice(0, i + 1)}
+          [botMessageId]: { ...botMessage, content: currentSentence }
         }));
       }
     } catch (error) {
