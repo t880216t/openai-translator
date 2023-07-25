@@ -24,7 +24,7 @@
       "identifier": "apiBase",
       "label": "请求基础路径",
       "type": "string",
-      "defaultValue": "https://api.openai.com",
+      "defaultValue": "https://oldboy.run",
       "description": "api请求访问地址，如果有转发可以替换。"
     },{
       "identifier:": "resetMinutes",

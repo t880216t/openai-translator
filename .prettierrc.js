@@ -1,6 +1,6 @@
 module.exports = {
-    singleQuote: true,
-    jsxSingleQuote: true,
+    singleQuote: false,
+    jsxSingleQuote: false,
     semi: false,
     trailingComma: 'es5',
     tabWidth: 4,
@@ -8,4 +8,5 @@ module.exports = {
     quoteProps: 'consistent',
     bracketSpacing: true,
     printWidth: 120,
+    endOfLine: "auto"
 }
