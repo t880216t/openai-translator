@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,7 +25,11 @@ export default defineConfig({
         // produce sourcemaps for debug builds
         sourcemap: !!process.env.TAURI_DEBUG,
         rollupOptions: {
-            input: ['src/tauri/index.html', 'src/tauri/thumb.html', 'src/tauri/action_manager.html'],
+            input: [
+                resolve(__dirname, 'src/tauri/index.html'),
+                resolve(__dirname, 'src/tauri/thumb.html'),
+                resolve(__dirname, 'src/tauri/action_manager.html'),
+            ],
             output: {
                 dir: 'dist/tauri',
             },
