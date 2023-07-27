@@ -35,11 +35,12 @@ export async function queryKnowledgeList(params: any) {
 
 export async function queryKnowledgeChat(params: any) {
     return request(`/api/knowledge/question`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(params),
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json"
         },
+        signal: params?.signal
     });
 }
 
