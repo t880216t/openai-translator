@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {SendOutlined} from '@ant-design/icons'
+import {SendOutlined, BorderOutlined} from '@ant-design/icons'
 import { Button, Mentions } from 'antd';
 
 import './index.scss'
@@ -13,6 +13,7 @@ interface Item {
 
 interface ISendProps{
   onSendMessage: (prompt: string) => void;
+  onStopSend: () => void;
   onSubmitting: boolean;
   text?: string
 }
@@ -22,6 +23,7 @@ function Send(props: ISendProps) {
   const [helpPrompts, setHelpPrompts] = useState( [])
   const [matchedData, setMatchedData] = useState<Item[]>([]);
   const { theme, themeType } = useTheme()
+  const [showStop, setShowStop] = useState(false)
 
   useEffect(() => {
     setOriginalText(props.text)
@@ -60,13 +62,24 @@ function Send(props: ISendProps) {
   };
 
   // 重构
-  const handleUserPrompt = (prompt: string) => {
+  const handleUserPrompt = async (prompt: string) => {
     if (prompt.trim() === "") {
       return;
     }
     setOriginalText("");
-    props.onSendMessage(prompt);
+    await props.onSendMessage(prompt);
+    setShowStop(false)
   };
+
+  const handleMouseEnter = () => {
+    if (props.onSubmitting){
+      setShowStop(true)
+    }
+  }
+
+  const handleStop = () => {
+    props.onStopSend()
+  }
 
   return (
     <div className="input-wrap">
@@ -93,13 +106,20 @@ function Send(props: ISendProps) {
         className="send"
         size="small"
         type={originalText?.trim() === "" ? "default" : "primary"}
-        icon={<SendOutlined style={props.onSubmitting ? {color: theme.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />}
-        loading={props.onSubmitting}
+        icon={
+          showStop?
+            <BorderOutlined style={{color: theme.colors.contentPrimary, fontWeight: "bold", fontSize: 16}} />
+            :
+            <SendOutlined style={props.onSubmitting ? {color: theme.colors.contentPrimary, fontWeight: "bold", fontSize: 16}: undefined} />
+        }
+        loading={showStop? false: props.onSubmitting}
         style={{
           background: originalText?.trim() === "" ? theme.colors.backgroundSecondary: theme.colors.backgroundInversePrimary,
           color: originalText?.trim() === "" ? theme.colors.contentPrimary: theme.colors.contentInversePrimary,
         }}
-        onClick={async () => await handleUserPrompt(originalText || "")}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={() => setShowStop(false)}
+        onClick={async () => props.onSubmitting ? await handleStop() : await handleUserPrompt(originalText || "")}
       />
     </div>
   );

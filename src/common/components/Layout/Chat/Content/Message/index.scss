@@ -39,12 +39,17 @@
         flex-direction: row;
         flex: 3;
       }
-      .action{
+
+      .action {
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
         flex: 2
       }
+    }
+
+    p {
+      margin-top: 2px;
     }
   }
 }

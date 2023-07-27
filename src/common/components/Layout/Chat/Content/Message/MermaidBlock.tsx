@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { DownloadOutlined } from "@ant-design/icons"
 import { Button, Tooltip, message } from "antd";
 import { writeBinaryFile, BaseDirectory } from '@tauri-apps/api/fs';
+import { open } from '@tauri-apps/api/shell';
 import { downloadDir } from '@tauri-apps/api/path';
 
 interface MermaidComponentProps {
@@ -57,8 +58,11 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
         (match) => punctuationMap[match]
       );
       try {
-        const svgCode = await mermaidAPI.render(`mermaid-${Date.now()}`, formatCode);
-        setSvg(svgCode?.svg);
+        if (!submitState){
+          const svgCode = await mermaidAPI.render(`mermaid-${Date.now()}`, formatCode);
+          setSvg(svgCode?.svg);
+        }
+
       } catch (error) {
         setErrorSvgCode(formatCode);
         console.log(error);
@@ -113,6 +117,7 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
       const uint8Array = new Uint8Array(bufferData);
       await writeBinaryFile(file_name, uint8Array, { dir: BaseDirectory.Download });
       message.success(`图片已保存至：${download_dir}${file_name}`, 5)
+      // await open(`${download_dir}${file_name}`);
     } catch (error) {
       console.error('Failed to save image:', error);
       message.error('图片保存失败')

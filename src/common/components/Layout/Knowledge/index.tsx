@@ -60,6 +60,7 @@ function knowledgeComponent(props: IQuickProps) {
   const [listType, setListType] = useState("1");
   const [knowledgeIds, setKnowledgeIds] = useState<string[]>([]);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [abortController, setAbortController] = useState();
   const [selectKnowledgeList, setSelectKnowledgeList] = useState<IKnowledge[]>([]);
   const [messageList, setMessageList] = useState<{[key: string]: any}>({});
 
@@ -178,16 +179,20 @@ function knowledgeComponent(props: IQuickProps) {
     setMessageList(prevMessageList => ({...prevMessageList, [userMessageId]: userMessage}));
 
     try {
-      const res = await queryKnowledgeChat({ question, knowledgeIds, chatHistory });
-      if (!res){
+      // 如果控制器存在,说明有上个请求,就它取消并设置为空
+      let controller = new AbortController();
+      // @ts-ignore
+      setAbortController(controller);
+      const res = await queryKnowledgeChat({ question, knowledgeIds, chatHistory, signal: controller.signal });
+      if (!res) {
         setSubmitLoading(false);
         notice.error(res.msg);
-        return
+        return;
       }
       if (res && res.code != 0) {
         setSubmitLoading(false);
         notice.error(res.msg);
-        return
+        return;
       }
       const message = res.content;
       const sources = res.sources;
@@ -198,21 +203,20 @@ function knowledgeComponent(props: IQuickProps) {
         messageId: botMessageId,
         content: "",
         sources: sources,
-        createAt: new Date().getTime(),
+        createAt: new Date().getTime()
       };
 
-      setMessageList(prevMessageList => ({...prevMessageList, [botMessageId]: botMessage}));
+      setMessageList(prevMessageList => ({ ...prevMessageList, [botMessageId]: botMessage }));
 
-      // 以空格作为分隔符，逐个字地输出文本
-      const words = message.split(' '); // 将原始文本按空格分隔成单词数组
+      const segments = message.split(/(\s+|\p{Script=Han})/u).filter(Boolean); // 将原始文本按空格分隔英文，并按中文字符分隔成数组
 
-      for (let i = 0; i < words.length; i++) {
-        const currentWord = words[i];
+      for (let i = 0; i < segments.length; i++) {
+        const currentSegment = segments[i];
 
         await new Promise(resolve => setTimeout(resolve, 100)); // 延迟100毫秒
 
-        // 将当前单词以及之前的单词重新组成字符串
-        const currentSentence = words.slice(0, i + 1).join(' ');
+        // 将当前段落及之前的段落重新组成字符串
+        const currentSentence = segments.slice(0, i + 1).join("");
 
         setMessageList(prevMessageList => ({
           ...prevMessageList,
@@ -220,7 +224,6 @@ function knowledgeComponent(props: IQuickProps) {
         }));
       }
     } catch (error) {
-      notice.error("发送失败");
       setSubmitLoading(false);
     }
   };
@@ -259,6 +262,14 @@ function knowledgeComponent(props: IQuickProps) {
     })
   }
 
+  const handleStopSend = () => {
+    if (abortController) {
+      // @ts-ignore
+      abortController?.abort();
+      setSubmitLoading(false);
+    }
+  }
+
 
   return (
     <>
@@ -274,6 +285,7 @@ function knowledgeComponent(props: IQuickProps) {
             submitLoading={submitLoading}
             onCloseDrawer={() => setShowDrawer(false)}
             onDelete={handleDeleteMessage}
+            onStopSend={handleStopSend}
             onDownload={handleDownloadFile}
             onSendMessage={handleSendMessage}
           />
