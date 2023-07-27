@@ -17,6 +17,7 @@ interface IHeaderProps {
   onStartKnowLedgeChat: () => void
   selectKnowledgeList: IKnowledge[]
   onCloseDrawer: () => void
+  onStopSend: () => void
   onDelete: (id: string) => void
   onDownload: (id: string, fileName: string) => void
   onSendMessage: (prompt: string) => void
@@ -62,6 +63,7 @@ function Header(props: IHeaderProps) {
           submitLoading={props.submitLoading}
           onCloseDrawer={props.onCloseDrawer}
           onSendMessage={props.onSendMessage}
+          onStopSend={props.onStopSend}
           onDelete={props.onDelete}
           onDownload={props.onDownload}
         />

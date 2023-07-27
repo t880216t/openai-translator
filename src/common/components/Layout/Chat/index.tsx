@@ -27,7 +27,7 @@ function ChatHomeComponent(props: IChatProps) {
   const [messageList, setMessageList] = useState<{[key: string]: any}>({})
   const [currentSessionTitle, setCurrentSessionTitle] = useState('');
   const [activityHistoryId, setActivityHistoryId] = useState<number|null>(null);
-  const [abortController] = useState(new AbortController());
+  const [abortController, setAbortController] = useState();
   const [onSubmitting, setOnSubmitting] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
@@ -170,6 +170,15 @@ function ChatHomeComponent(props: IChatProps) {
     await sendMessage(prompt)
   }
 
+  const handleStopSend = () => {
+    if (abortController) {
+      // @ts-ignore
+      abortController?.abort()
+      setOnSubmitting(false)
+      setNeedShowThinking(false)
+    }
+  }
+
   const onResponseMessage = (message: IMessage) => {
     // 添加一条发送人是机器人的message，根据messageId合并流式接口返回的多条消息
     setMessageList((messageList) => {
@@ -185,11 +194,16 @@ function ChatHomeComponent(props: IChatProps) {
   const sendMessage = async (prompt: string) => {
     setOnSubmitting(true)
     setNeedShowThinking(true)
+    // 如果控制器存在,说明有上个请求,就它取消并设置为空
+    let controller = new AbortController()
+    // @ts-ignore
+    setAbortController(controller)
     await chat({
       text: prompt,
       assistantPrompts: userPrompts,
       lastPrompt: lastAssistPrompt,
-      signal: abortController.signal,
+      // @ts-ignore
+      signal: controller.signal,
       onMessage: (message: { role: string }) => {
         if (message.role) return
         // @ts-ignore
@@ -226,7 +240,8 @@ function ChatHomeComponent(props: IChatProps) {
         <Footer style={{padding: "10px 20px 0 20px", background: props.theme?.colors.backgroundSecondary}}>
           <Send
             text={props?.text || ''}
-            onSendMessage={(prompt: string) => handleSendMessage(prompt)}
+            onSendMessage={async (prompt: string) => await handleSendMessage(prompt)}
+            onStopSend={handleStopSend}
             onSubmitting={onSubmitting}
           />
         </Footer>

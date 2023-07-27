@@ -17,6 +17,7 @@ interface IDrawerProps {
   showDrawer: boolean;
   submitLoading: boolean;
   onCloseDrawer: () => void;
+  onStopSend: () => void;
   onDelete: (id: string) => void;
   onDownload: (id: string, fileName:string) => void;
   onSendMessage: (prompt: string) => void;
@@ -26,8 +27,8 @@ interface IDrawerProps {
 function BasicComponent(props: IDrawerProps) {
   const { theme, themeType } = useTheme()
 
-  const handleSendMessage = (prompt: string) => {
-    props.onSendMessage(prompt);
+  const handleSendMessage = async (prompt: string) => {
+    await props.onSendMessage(prompt);
   }
 
   useEffect(() => {
@@ -69,7 +70,8 @@ function BasicComponent(props: IDrawerProps) {
         <div  style={{padding: "10px 5px"}}>
           <ChatSend
             text={props?.text || ''}
-            onSendMessage={(prompt: string) => handleSendMessage(prompt)}
+            onSendMessage={async (prompt: string) => await handleSendMessage(prompt)}
+            onStopSend={props.onStopSend}
             onSubmitting={props.submitLoading}
           />
         </div>

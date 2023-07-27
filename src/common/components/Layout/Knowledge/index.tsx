@@ -259,6 +259,10 @@ function knowledgeComponent(props: IQuickProps) {
     })
   }
 
+  const handleStopSend = () => {
+    setSubmitLoading(false);
+  }
+
 
   return (
     <>
@@ -274,6 +278,7 @@ function knowledgeComponent(props: IQuickProps) {
             submitLoading={submitLoading}
             onCloseDrawer={() => setShowDrawer(false)}
             onDelete={handleDeleteMessage}
+            onStopSend={handleStopSend}
             onDownload={handleDownloadFile}
             onSendMessage={handleSendMessage}
           />
