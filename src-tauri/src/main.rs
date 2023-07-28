@@ -262,15 +262,27 @@ fn main() {
         let vendor_id = cpu.vendor_id().to_string();
         *CPU_VENDOR.lock() = vendor_id;
     }
+
+    let mut is_running = false;
+
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+        .plugin(tauri_plugin_single_instance::init(move |app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
-            Notification::new(&app.config().tauri.bundle.identifier)
-                .title("This app is already running!")
-                .body("You can find it in the tray menu.")
-                .icon("icon")
-                .notify(app)
-                .unwrap();
+            if is_running {
+                // 如果应用已经运行，则显示主窗口（如果需要）
+                // 这里假设您已经设置了窗口的名称为 "main_window"，您可以根据您的窗口名称来修改
+                app.get_window("main_window").unwrap().show().unwrap();
+            } else {
+                // 如果应用是第一个实例，则显示提示信息
+                Notification::new(&app.config().tauri.bundle.identifier)
+                    .title("This app is already running!")
+                    .body("You can find it in the tray menu.")
+                    .icon("icon")
+                    .notify(app)
+                    .unwrap();
+                // 将标记设置为已运行
+                is_running = true;
+            }
             app.emit_all("single-instance", Payload { args: argv, cwd })
                 .unwrap();
         }))
