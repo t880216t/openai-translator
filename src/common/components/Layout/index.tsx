@@ -8,9 +8,8 @@ import { Settings } from '../Settings'
 
 import Chat from "./Chat"
 import Quick from "./Quick"
-import Knowledge from "./Knowledge"
-// import Meeting from "./Meeting"
-// import Speech from "./Meeting/Speech"
+import Knowledge from "./Knowledge";
+import Speech from "./Meeting/Speech";
 
 import "./index.scss"
 import { IInnerProps } from './types';
@@ -54,21 +53,21 @@ function  BaseComponent(props: IBaseProps) {
   const items: TabsProps['items'] = [
     {
       key: 'quick',
-      label: `快捷功能`,
+      label: `快捷功能`
     },
     {
-      key: 'chat',
-      label: '对话模式',
+      key: "chat",
+      label: "对话模式"
     },
     {
-      key: 'knowledge',
-      label: `知识库`,
+      key: "knowledge",
+      label: `知识库`
     },
-    // {
-    //   key: 'meeting',
-    //   // disabled: true,
-    //   label: `会议记录员`,
-    // },
+    {
+      key: "meeting",
+      // disabled: true,
+      label: `会议记录员`
+    }
   ];
 
   return (
@@ -76,8 +75,9 @@ function  BaseComponent(props: IBaseProps) {
       <div className="content">
         <Chat isShow={activeKey == "chat"} theme={theme} {...props} />
         <Quick isShow={activeKey == "quick"} theme={theme} {...props} engine={props.engine} />
-        <Knowledge showSetting={showSetting} isShow={activeKey == "knowledge"} theme={theme} {...props} engine={props.engine} />
-        {/*<Speech isShow={activeKey == "meeting"} theme={theme} {...props} engine={props.engine} />*/}
+        <Knowledge showSetting={showSetting} isShow={activeKey == "knowledge"} theme={theme} {...props}
+                   engine={props.engine} />
+        <Speech isShow={activeKey == "meeting"} theme={theme} {...props} engine={props.engine} />
       </div>
       {showSetting && (
         <Settings

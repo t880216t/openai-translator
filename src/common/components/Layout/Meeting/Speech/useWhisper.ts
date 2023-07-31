@@ -2,8 +2,9 @@
 import { useEffectAsync, useMemoAsync } from '@chengsokdara/react-hooks-async'
 import type { RawAxiosRequestHeaders } from 'axios'
 import type { Harker } from 'hark'
-import type { Encoder } from 'lamejs'
-import { useEffect, useRef, useState } from 'react'
+import type { Encoder } from "lamejs";
+import * as utils from "../../../../utils";
+import { useEffect, useRef, useState } from "react";
 import type { Options, RecordRTCPromisesHandler } from 'recordrtc'
 import {
   defaultStopTimeout,
@@ -15,8 +16,9 @@ import {
   UseWhisperConfig,
   UseWhisperHook,
   UseWhisperTimeout,
-  UseWhisperTranscript,
-} from './types'
+  UseWhisperTranscript
+} from "./types";
+import { urlJoin } from "url-join-ts";
 
 /**
  * default useWhisper configuration
@@ -66,25 +68,25 @@ export const useWhisper: UseWhisperHook = (config) => {
     timeSlice,
     whisperConfig,
     onDataAvailable: onDataAvailableCallback,
-    onTranscribe: onTranscribeCallback,
+    onTranscribe: onTranscribeCallback
   } = {
     ...defaultConfig,
-    ...config,
+    ...config
   }
 
-  if (!apiKey && !onTranscribeCallback) {
-    throw new Error('apiKey is required if onTranscribe is not provided')
-  }
+  // if (!apiKey && !onTranscribeCallback) {
+  //   throw new Error('apiKey is required if onTranscribe is not provided')
+  // }
 
-  const chunks = useRef<Blob[]>([])
-  const encoder = useRef<Encoder>()
-  const listener = useRef<Harker>()
-  const recorder = useRef<RecordRTCPromisesHandler>()
-  const stream = useRef<MediaStream>()
-  const timeout = useRef<UseWhisperTimeout>(defaultTimeout)
+  const chunks = useRef<Blob[]>([]);
+  const encoder = useRef<Encoder>();
+  const listener = useRef<Harker>();
+  const recorder = useRef<RecordRTCPromisesHandler>();
+  const stream = useRef<MediaStream>();
+  const timeout = useRef<UseWhisperTimeout>(defaultTimeout);
 
-  const [recording, setRecording] = useState<boolean>(false)
-  const [speaking, setSpeaking] = useState<boolean>(false)
+  const [recording, setRecording] = useState<boolean>(false);
+  const [speaking, setSpeaking] = useState<boolean>(false);
   const [transcribing, setTranscribing] = useState<boolean>(false)
   const [transcript, setTranscript] =
     useState<UseWhisperTranscript>(defaultTranscript)
@@ -509,21 +511,21 @@ export const useWhisper: UseWhisperHook = (config) => {
         body.append('prompt', whisperConfig.prompt)
       }
       if (whisperConfig?.response_format) {
-        body.append('response_format', whisperConfig.response_format)
+        body.append("response_format", whisperConfig.response_format);
       }
       if (whisperConfig?.temperature) {
-        body.append('temperature', `${whisperConfig.temperature}`)
+        body.append("temperature", `${whisperConfig.temperature}`);
       }
-      const headers: RawAxiosRequestHeaders = {}
-      headers['Content-Type'] = 'multipart/form-data'
-      if (apiKey) {
-        headers['Authorization'] = `Bearer ${apiKey}`
-      }
-      const { default: axios } = await import('axios')
-      const response = await axios.post(whisperApiEndpoint + mode, body, {
-        headers,
-      })
-      return response.data.text
+      const headers: RawAxiosRequestHeaders = {};
+      headers["Content-Type"] = "multipart/form-data";
+      headers["Authorization"] = `Bearer ${apiKey}`;
+      const { default: axios } = await import("axios");
+      const settings = await utils.getSettings();
+      const url = urlJoin(settings.apiURL, whisperApiEndpoint + mode);
+      const response = await axios.post(url, body, {
+        headers
+      });
+      return response.data.text;
     },
     [apiKey, mode, whisperConfig]
   )
