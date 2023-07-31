@@ -29,8 +29,9 @@ mermaidAPI.initialize({
 
 const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, submitState }) => {
   const dom = useRef<HTMLDivElement>(null);
-  const [svg, setSvg] = useState('');
-  const [errorSvgCode, setErrorSvgCode] = useState('');
+  const [svg, setSvg] = useState("");
+  const [showMermaid, setShowMermaid] = useState(false);
+  const [errorSvgCode, setErrorSvgCode] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -57,18 +58,28 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
         /([，；。：！？“”‘’【】（）《》、])/g,
         (match) => punctuationMap[match]
       );
+      const mermaid_id = `mermaid-${Date.now()}`;
       try {
-        if (!submitState){
-          const svgCode = await mermaidAPI.render(`mermaid-${Date.now()}`, formatCode);
-          setSvg(svgCode?.svg);
-        }
+        const svgCode = await mermaidAPI.render(mermaid_id, formatCode);
+        setSvg(svgCode?.svg);
 
       } catch (error) {
         setErrorSvgCode(formatCode);
         console.log(error);
+        // 移除mermaid_id元素
+        const mermaidDom = document.getElementById(mermaid_id);
+        if (mermaidDom) {
+          mermaidDom.remove();
+        }
       }
     })();
   }, [code]);
+
+  useEffect(() => {
+    if (!submitState) {
+      setShowMermaid(true);
+    }
+  }, [submitState]);
 
   const onclickExport = useCallback(() => {
     const svg = dom.current?.children[0];
@@ -77,7 +88,7 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
     const w = svg.clientWidth * 4;
     const h = svg.clientHeight * 4;
 
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext('2d');
@@ -128,9 +139,9 @@ const MermaidComponent: React.FC<MermaidComponentProps> = ({ code, content, subm
     <div style={{ width: '78vw', overflowX: 'auto', position: "relative"}}>
       <div ref={dom} dangerouslySetInnerHTML={{ __html: svg }} />
       <div style={{position: "absolute", top: 0, right: 0}} >
-        {!submitState && (
+        {showMermaid && (
           <Tooltip placement="left" title={"下载图片"}>
-            <Button onClick={onclickExport} type={"text"} icon={<DownloadOutlined style={{fontSize: 18}}/>} />
+            <Button onClick={onclickExport} type={"text"} icon={<DownloadOutlined style={{ fontSize: 18 }} />} />
           </Tooltip>
         )}
       </div>

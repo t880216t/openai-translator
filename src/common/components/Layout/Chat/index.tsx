@@ -204,11 +204,14 @@ function ChatHomeComponent(props: IChatProps) {
       lastPrompt: lastAssistPrompt,
       // @ts-ignore
       signal: controller.signal,
-      onMessage: (message: { role: string }) => {
-        if (message.role) return
+      onMessage: (message: { role: string, finishReason: string }) => {
+        if (message.role) return;
+        setNeedShowThinking(false);
+        if (message?.finishReason === "stop") {
+          setOnSubmitting(false);
+        }
         // @ts-ignore
         onResponseMessage(message);
-        setNeedShowThinking(false)
       },
       onFinish: (reason: string | undefined) => {
         console.log("reason", reason);

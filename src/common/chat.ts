@@ -408,10 +408,6 @@ export async function chat(query: any) {
                     return { error: 'No result' }
                 }
                 const { finish_reason: finishReason } = choices[0]
-                if (finishReason) {
-                    query.onFinish(finishReason)
-                    return
-                }
 
                 let targetTxt = ''
                 if (!isChatAPI) {
@@ -422,17 +418,35 @@ export async function chat(query: any) {
                         targetTxt = quoteProcessor.processText(targetTxt)
                     }
 
-                    query.onMessage({ messageId: id, content: targetTxt, role: '', isWordMode, createAt: created  })
+                    query.onMessage({
+                        messageId: id,
+                        content: targetTxt,
+                        role: "",
+                        isWordMode,
+                        createAt: created,
+                        finishReason
+                    });
                 } else {
-                    const { content = '', role } = choices[0].delta
+                    const { content = "", role } = choices[0].delta;
 
-                    targetTxt = content
+                    targetTxt = content;
 
                     if (quoteProcessor) {
-                        targetTxt = quoteProcessor.processText(targetTxt)
+                        targetTxt = quoteProcessor.processText(targetTxt);
                     }
 
-                    query.onMessage({ messageId: id, content: targetTxt, role, isWordMode, createAt: created })
+                    query.onMessage({
+                        messageId: id,
+                        content: targetTxt,
+                        role,
+                        isWordMode,
+                        createAt: created,
+                        finishReason
+                    });
+                }
+                if (finishReason) {
+                    query.onFinish(finishReason);
+                    return;
                 }
             },
             onError: (err) => {
