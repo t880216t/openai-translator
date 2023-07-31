@@ -142,7 +142,7 @@ export function Markdown(_props: MarkdownProps) {
           }
         }}>{_props.content}</ReactMarkdown>
     </div>
-  ), [_props.content, classes]);
+  ), [_props.content, classes, _props.submitState]);
 
   return elem;
 }

@@ -24,6 +24,7 @@ export interface IMessage {
   content: string,
   sources?: ISource[],
   createAt?: number,
+  finishReason?: string,
 }
 
 export interface IMessageDBProps{
