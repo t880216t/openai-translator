@@ -44,7 +44,7 @@ function Send(props: ISendProps) {
   };
 
   const onPressEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && e.ctrlKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleUserPrompt((e.target as HTMLTextAreaElement).value);
     }
@@ -94,12 +94,12 @@ function Send(props: ISendProps) {
         onSearch={onSearch}
         onSelect={(record: any, prefix) => onSelect(record.value, prefix)}
         onChange={(value) => onInputChange(value)}
-        placeholder="来说点什么吧...(Ctrl+Enter=发送),输入 / 查看更多推荐"
+        placeholder="来说点什么吧...(Shift+Enter=换行),输入 / 查看更多推荐"
         autoFocus
         autoSize={{maxRows: 4 }}
         value={originalText}
         prefix={"/"}
-        options={matchedData}
+        options={matchedData || []}
         onPressEnter={onPressEnter}
       />
       <Button

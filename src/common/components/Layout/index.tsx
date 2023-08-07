@@ -62,12 +62,12 @@ function  BaseComponent(props: IBaseProps) {
     {
       key: "knowledge",
       label: `知识库`
-    },
-    {
-      key: "meeting",
-      // disabled: true,
-      label: `会议记录员`
     }
+    // {
+    //   key: "meeting",
+    //   disabled: true,
+    //   label: `会议记录员`
+    // }
   ];
 
   return (
@@ -77,7 +77,7 @@ function  BaseComponent(props: IBaseProps) {
         <Quick isShow={activeKey == "quick"} theme={theme} {...props} engine={props.engine} />
         <Knowledge showSetting={showSetting} isShow={activeKey == "knowledge"} theme={theme} {...props}
                    engine={props.engine} />
-        <Speech isShow={activeKey == "meeting"} theme={theme} {...props} engine={props.engine} />
+        {/*<Speech isShow={activeKey == "meeting"} theme={theme} {...props} engine={props.engine} />*/}
       </div>
       {showSetting && (
         <Settings
