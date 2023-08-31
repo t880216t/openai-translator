@@ -63,7 +63,7 @@ function Send(props: ISendProps) {
 
   // 重构
   const handleUserPrompt = async (prompt: string) => {
-    if (prompt.trim() === "") {
+    if (prompt?.trim() === "") {
       return;
     }
     setOriginalText("");

@@ -5,28 +5,29 @@ import { Client as Styletron } from "styletron-engine-atomic";
 import {
   queryKnowledgeList,
   queryKnowledgeCreate,
-  queryKnowledgeChat,
   queryKnowledgeShare,
   queryKnowledgeRemove,
   queryKnowledgeFileDownload,
 } from "../../../knowledge";
 
-import _Header from "./Header"
-import _Content from "./Content"
-import CreateModal from "./Modals/CreateModal"
+import _Header from "./Header";
+import _Content from "./Content";
+import CreateModal from "./Modals/CreateModal";
 
-import "./index.scss"
+import "./index.scss";
 import { PlusOutlined } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
 import { downloadDir } from "@tauri-apps/api/path";
 import { BaseDirectory, writeBinaryFile } from "@tauri-apps/api/fs";
+import { chat } from "../../../chat";
+import { IMessage } from "../types";
 
 const { Header, Content } = Layout;
 
 interface IQuickProps {
-  showSetting: boolean
-  isShow: boolean
-  text?: string
+  showSetting: boolean;
+  isShow: boolean;
+  text?: string;
   theme?: Theme;
   engine?: Styletron;
 }
@@ -62,31 +63,54 @@ function knowledgeComponent(props: IQuickProps) {
   const [showDrawer, setShowDrawer] = useState(false);
   const [abortController, setAbortController] = useState();
   const [selectKnowledgeList, setSelectKnowledgeList] = useState<IKnowledge[]>([]);
-  const [messageList, setMessageList] = useState<{[key: string]: any}>({});
+  const [messageList, setMessageList] = useState<{ [key: string]: any }>({});
+  const [userPrompts, setUserPrompts] = useState<string[]>([]);
+  const [lastAssistPrompt, setLastAssistPrompt] = useState<string | null>(null);
+  const [needShowThinking, setNeedShowThinking] = useState(false);
 
   // @ts-ignore
   useEffect(async () => {
-    const res: IKnowledgeResponse = await queryKnowledgeList({listType});
+    const res: IKnowledgeResponse = await queryKnowledgeList({ listType });
     if (res.code == 0) {
       setKnowledgeContent(res.content);
     }
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (knowledgeContent && knowledgeContent.knowledge_list && knowledgeIds.length > 0) {
       const selectKnowledgeList = knowledgeContent.knowledge_list.filter((item) => {
-        return knowledgeIds.includes(item.knowledge_id)
-      })
-      setSelectKnowledgeList(selectKnowledgeList)
-    }else {
-      setSelectKnowledgeList([])
+        return knowledgeIds.includes(item.knowledge_id);
+      });
+      setSelectKnowledgeList(selectKnowledgeList);
+    } else {
+      setSelectKnowledgeList([]);
     }
-    setMessageList({})
+    setMessageList({});
   }, [knowledgeIds])
+
+  useEffect(() => {
+    if (Object.keys(messageList).length > 0) {
+      const userPrompts = Object.keys(messageList).filter((key) => {
+        return messageList[key].role === "user" && messageList[key].content;
+      }).map((key) => {
+        return messageList[key].content;
+      });
+      // 获取messageList最后一条bot消息的content
+      const lastAssistMessage = Object.keys(messageList).filter((key) => {
+        return messageList[key].role !== "user" && messageList[key].content;
+      }).map((key) => {
+        return messageList[key].content;
+      }).pop();
+      if (lastAssistMessage) {
+        setUserPrompts(userPrompts);
+        setLastAssistPrompt(lastAssistMessage);
+      }
+    }
+  }, [messageList]);
 
   const handleShowCreateModal = () => {
     setShowCreateModal(true);
-  }
+  };
 
   // @ts-ignore
   const handleCreateKnowledge = async (values) => {
@@ -157,88 +181,74 @@ function knowledgeComponent(props: IQuickProps) {
   }
 
   const handleSendMessage = async (question: string) => {
-    const userMessageId = uuidv4().replace(/-/g, '');
+    const userMessageId = uuidv4().replace(/-/g, "");
     const userMessage = {
       role: "user",
       messageId: userMessageId,
       content: question,
-      createAt: new Date().getTime(),
+      createAt: new Date().getTime()
     };
+    setMessageList(prevMessageList => ({ ...prevMessageList, [userMessageId]: userMessage }));
+    await sendMessage(question);
+  };
 
-    let chatHistory = "";
-    Object.keys(messageList).forEach((key) => {
-      const item = messageList[key];
-      if (item.role === "user") {
-        chatHistory += `Human: ${item.content}\n`;
-      } else {
-        chatHistory += `Assistant: ${item.content}\n`;
+  const onResponseMessage = (message: IMessage) => {
+    // 添加一条发送人是机器人的message，根据messageId合并流式接口返回的多条消息
+    setMessageList((messageList) => {
+      if (messageList[message.messageId]) {
+        const oldMessage = messageList[message.messageId];
+        // 如果是流式接口返回的消息，合并到原来消息的content中
+        return { ...messageList, [message.messageId]: { ...oldMessage, content: oldMessage.content + message.content } };
       }
+      return { ...messageList, [message.messageId]: message };
     });
+  };
 
+  const sendMessage = async (prompt: string) => {
     setSubmitLoading(true);
-    setMessageList(prevMessageList => ({...prevMessageList, [userMessageId]: userMessage}));
-
-    try {
-      // 如果控制器存在,说明有上个请求,就它取消并设置为空
-      let controller = new AbortController();
+    setNeedShowThinking(true);
+    // 如果控制器存在,说明有上个请求,就它取消并设置为空
+    let controller = new AbortController();
+    // @ts-ignore
+    setAbortController(controller);
+    await chat({
+      text: prompt,
+      assistantPrompts: userPrompts,
+      lastPrompt: lastAssistPrompt,
       // @ts-ignore
-      setAbortController(controller);
-      const res = await queryKnowledgeChat({ question, knowledgeIds, chatHistory, signal: controller.signal });
-      if (!res) {
+      signal: controller.signal,
+      onMessage: (message: { role: string, finishReason: string }) => {
+        if (message.role) return;
+        setNeedShowThinking(false);
+        if (message?.finishReason === "stop") {
+          setSubmitLoading(false);
+        }
+        // @ts-ignore
+        onResponseMessage(message);
+      },
+      onFinish: (reason: string | undefined) => {
+        console.log("reason", reason);
         setSubmitLoading(false);
-        notice.error(res.msg);
-        return;
-      }
-      if (res && res.code != 0) {
+      },
+      onError: (error: any) => {
+        console.log(error);
+        notice.error("请求失败，请检查网络及配置！");
         setSubmitLoading(false);
-        notice.error(res.msg);
-        return;
+        setNeedShowThinking(false);
       }
-      const message = res.content;
-      const sources = res.sources;
-      setSubmitLoading(false);
-      const botMessageId = uuidv4().replace(/-/g, '');
-      const botMessage = {
-        role: "bot",
-        messageId: botMessageId,
-        content: "",
-        sources: sources,
-        createAt: new Date().getTime()
-      };
-
-      setMessageList(prevMessageList => ({ ...prevMessageList, [botMessageId]: botMessage }));
-
-      const segments = message.split(/(\s+|\p{Script=Han})/u).filter(Boolean); // 将原始文本按空格分隔英文，并按中文字符分隔成数组
-
-      for (let i = 0; i < segments.length; i++) {
-        const currentSegment = segments[i];
-
-        await new Promise(resolve => setTimeout(resolve, 100)); // 延迟100毫秒
-
-        // 将当前段落及之前的段落重新组成字符串
-        const currentSentence = segments.slice(0, i + 1).join("");
-
-        setMessageList(prevMessageList => ({
-          ...prevMessageList,
-          [botMessageId]: { ...botMessage, content: currentSentence }
-        }));
-      }
-    } catch (error) {
-      setSubmitLoading(false);
-    }
+    }, "/v1/knowledge/stream_question");
   };
 
   const handleDeleteMessage = (messageId: string) => {
-    const newMessageList = {...messageList};
+    const newMessageList = { ...messageList };
     delete newMessageList[messageId];
     setMessageList(newMessageList);
-  }
+  };
 
   const handleDownloadFile = (knowledgeId: string, fileName: string) => {
-    queryKnowledgeFileDownload({knowledgeId}).then(async (res) => {
+    queryKnowledgeFileDownload({ knowledgeId }).then(async (res) => {
       try {
         const download_dir = await downloadDir();
-        const uint8Array = new Uint8Array(res);
         const save_name = `${new Date().getTime().toString()}_${fileName}`
         await writeBinaryFile(save_name, res, { dir: BaseDirectory.Download });
         message.success(`文件已保存至：${download_dir}${save_name}` )
@@ -268,13 +278,20 @@ function knowledgeComponent(props: IQuickProps) {
       abortController?.abort();
       setSubmitLoading(false);
     }
-  }
+  };
+
+  const handleCloseDrawer = () => {
+    setShowDrawer(false);
+    setMessageList([]);
+    setLastAssistPrompt("");
+    setUserPrompts([]);
+  };
 
 
   return (
     <>
-      <Layout style={{height: props.isShow ? "100%": "0px"}} className="pageContainer">
-        <Header style={{paddingInline: 10, background: props.theme?.colors.backgroundPrimary }}>
+      <Layout style={{ height: props.isShow ? "100%" : "0px" }} className="pageContainer">
+        <Header style={{ paddingInline: 10, background: props.theme?.colors.backgroundPrimary }}>
           <_Header
             messageList={messageList}
             listType={listType}
@@ -283,7 +300,8 @@ function knowledgeComponent(props: IQuickProps) {
             onStartKnowLedgeChat={handleStartKnowLedgeChat}
             showDrawer={showDrawer}
             submitLoading={submitLoading}
-            onCloseDrawer={() => setShowDrawer(false)}
+            needShowThinking={needShowThinking}
+            onCloseDrawer={() => handleCloseDrawer()}
             onDelete={handleDeleteMessage}
             onStopSend={handleStopSend}
             onDownload={handleDownloadFile}

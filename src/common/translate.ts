@@ -412,7 +412,8 @@ export async function translate(query: TranslateQuery) {
         apiKey = await utils.getApiKey()
     }
     const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        "User-Token": settings.userToken ?? ""
     }
 
     let isChatAPI = true
