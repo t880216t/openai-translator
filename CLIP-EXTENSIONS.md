@@ -15,19 +15,25 @@ Usually the clipboard is used to get the selected text, but this can cause bugs 
 
 [PopClip](https://pilotmoon.com/popclip/) is a well-established clip word software on macOS, it provides a perfect plug-in mechanism, we provide its plug-in, the installation steps are as follows:
 
-* 1. Download and install [PopClip](https://pilotmoon.com/popclip/)
-* 2. Download [openai-translator.popclipextz](https://github.com/openai-translator/openai-translator/releases/latest/download/openai-translator.popclipextz)
-* 3. Double-click the downloaded openai-translator.popclipextz and click the Install "OpenAI Translator" button in the popup window to finish the installation
-    
-    <p align="center">
-        <img width="400" src="https://user-images.githubusercontent.com/1206493/240260692-8af6141a-3dba-4775-921d-505223addf9e.png" />
-    </p>
+*
+  1. Download and install [PopClip](https://pilotmoon.com/popclip/)
+*
+  2.
+  Download [ai-helper.popclipextz](https://github.com/t880216t/openai-translator/releases/latest/download/openai-translator.popclipextz)
+*
+  3. Double-click the downloaded ai-helper.popclipextz and click the Install "OpenAI Translator" button in the popup
+     window to finish the installation
 
-* 4. Open OpenAI Translator in PopClip
-    
-    <p align="center">
-        <img width="400" src="https://user-images.githubusercontent.com/1206493/240258859-c4f2ec91-255f-414c-a4a4-aca25fceb0b5.png" />
-    </p>
+  <p align="center">
+      <img width="400" src="https://user-images.githubusercontent.com/1206493/240260692-8af6141a-3dba-4775-921d-505223addf9e.png" />
+  </p>
+
+*
+  4. Open OpenAI Translator in PopClip
+
+  <p align="center">
+      <img width="400" src="https://user-images.githubusercontent.com/1206493/240258859-c4f2ec91-255f-414c-a4a4-aca25fceb0b5.png" />
+  </p>
 
 * 5. The effect is as follows
 
@@ -39,13 +45,19 @@ Usually the clipboard is used to get the selected text, but this can cause bugs 
 
 ## SnipDo
 
-* 1. Download and install [SnipDo](https://apps.microsoft.com/store/detail/snipdo/9NPZ2TVKJVT7)
-* 2. Download [openai-translator.pbar](https://github.com/openai-translator/openai-translator/releases/latest/download/openai-translator.pbar)
-* 3. Double-click the downloaded openai-translator.pbar to install it
-* 4. Enable OpenAI Translator in SnipDo's settings page
-* 5. The effect is as follows
+*
+  1. Download and install [SnipDo](https://apps.microsoft.com/store/detail/snipdo/9NPZ2TVKJVT7)
+*
+  2.
+  Download [ai-helper.pbar](https://github.com/t880216t/openai-translator/releases/latest/download/openai-translator.pbar)
+*
+  3. Double-click the downloaded ai-helper.pbar to install it
+*
+  4. Enable OpenAI Translator in SnipDo's settings page
+*
+  5. The effect is as follows
 
-    <p align="center">
-        <img width="600" src="https://user-images.githubusercontent.com/1206493/240358161-2788eb97-d00b-4808-aa86-a7fcfe3f71dd.gif" />
-    </p>
+  <p align="center">
+      <img width="600" src="https://user-images.githubusercontent.com/1206493/240358161-2788eb97-d00b-4808-aa86-a7fcfe3f71dd.gif" />
+  </p>
 

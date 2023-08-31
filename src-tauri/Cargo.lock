@@ -1456,7 +1456,7 @@ dependencies = [
     "libc",
     "once_cell",
     "smallvec",
- "thiserror",
+    "thiserror",
 ]
 
 [[package]]
@@ -1532,9 +1532,9 @@ dependencies = [
     "gtk-sys",
     "gtk3-macros",
     "libc",
- "once_cell",
- "pango",
- "pkg-config",
+    "once_cell",
+    "pango",
+    "pkg-config",
 ]
 
 [[package]]
@@ -3115,16 +3115,16 @@ dependencies = [
     "block",
     "dispatch",
     "glib-sys",
- "gobject-sys",
- "gtk-sys",
- "js-sys",
- "lazy_static",
- "log",
- "objc",
- "objc-foundation",
- "objc_id",
- "raw-window-handle",
- "wasm-bindgen",
+    "gobject-sys",
+    "gtk-sys",
+    "js-sys",
+    "lazy_static",
+    "log",
+    "objc",
+    "objc-foundation",
+    "objc_id",
+    "raw-window-handle",
+    "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
  "windows 0.37.0",
@@ -3627,10 +3627,10 @@ dependencies = [
     "cfg-if",
     "core-foundation-sys 0.8.3",
     "libc",
- "ntapi",
- "once_cell",
- "rayon",
- "winapi",
+    "ntapi",
+    "once_cell",
+    "rayon",
+    "winapi",
 ]
 
 [[package]]
@@ -3676,16 +3676,16 @@ dependencies = [
     "dispatch",
     "gdk",
     "gdk-pixbuf",
- "gdk-sys",
- "gdkx11-sys",
- "gio",
- "glib",
- "glib-sys",
- "gtk",
- "image",
- "instant",
- "jni",
- "lazy_static",
+    "gdk-sys",
+    "gdkx11-sys",
+    "gio",
+    "glib",
+    "glib-sys",
+    "gtk",
+    "image",
+    "instant",
+    "jni",
+    "lazy_static",
  "libappindicator",
  "libc",
  "log",
@@ -3930,11 +3930,11 @@ dependencies = [
     "semver",
     "serde",
     "serde_json",
- "serde_with",
- "thiserror",
- "url",
- "walkdir",
- "windows 0.39.0",
+    "serde_with",
+    "thiserror",
+    "url",
+    "walkdir",
+    "windows 0.39.0",
 ]
 
 [[package]]
@@ -4306,7 +4306,7 @@ dependencies = [
     "form_urlencoded",
     "idna",
     "percent-encoding",
- "serde",
+    "serde",
 ]
 
 [[package]]
@@ -4491,11 +4491,11 @@ dependencies = [
     "gobject-sys",
     "gtk",
     "gtk-sys",
- "javascriptcore-rs",
- "libc",
- "once_cell",
- "soup2",
- "webkit2gtk-sys",
+    "javascriptcore-rs",
+    "libc",
+    "once_cell",
+    "soup2",
+    "webkit2gtk-sys",
 ]
 
 [[package]]
@@ -4516,9 +4516,9 @@ dependencies = [
     "javascriptcore-rs-sys",
     "libc",
     "pango-sys",
- "pkg-config",
- "soup2-sys",
- "system-deps 6.0.3",
+    "pkg-config",
+    "soup2-sys",
+    "system-deps 6.0.3",
 ]
 
 [[package]]
@@ -5019,15 +5019,15 @@ dependencies = [
     "serde",
     "serde_json",
     "sha2",
- "soup2",
- "tao",
- "thiserror",
- "url",
- "webkit2gtk",
- "webkit2gtk-sys",
- "webview2-com",
- "windows 0.39.0",
- "windows-implement",
+    "soup2",
+    "tao",
+    "thiserror",
+    "url",
+    "webkit2gtk",
+    "webkit2gtk-sys",
+    "webview2-com",
+    "windows 0.39.0",
+    "windows-implement",
 ]
 
 [[package]]
