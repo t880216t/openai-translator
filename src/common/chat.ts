@@ -188,16 +188,20 @@ export class QuoteProcessor {
     }
 }
 
-export async function chat(query: any) {
-    const fetcher = getUniversalFetch()
-    let rolePrompt = ''
-    let commandPrompt = ''
-    let contentPrompt = query.text
-    let assistantPrompts: string[] = query?.assistantPrompts
-    let lastPrompt: string = query?.lastPrompt
-    let quoteProcessor: QuoteProcessor | undefined
-    const settings = await utils.getSettings()
-    let isWordMode = false
+export async function chat(query: any, apiURLPath: string = "") {
+    let rolePrompt = "";
+    let commandPrompt = "";
+    let contentPrompt = query.text;
+    let assistantPrompts: string[] = query?.assistantPrompts;
+    let lastPrompt: string = query?.lastPrompt;
+    let quoteProcessor: QuoteProcessor | undefined;
+    const settings = await utils.getSettings();
+    let isWordMode = false;
+    if (apiURLPath === "") {
+        apiURLPath = settings.apiURLPath;
+    }
+
+    const url = urlJoin(settings.apiURL, apiURLPath);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let body: Record<string, any> = {
@@ -207,196 +211,73 @@ export async function chat(query: any) {
         top_p: 1,
         frequency_penalty: 1,
         presence_penalty: 1,
-        stream: true,
+        stream: true
     }
 
-    let apiKey = ''
-    if (settings.provider !== 'ChatGPT') {
-        apiKey = await utils.getApiKey()
+    let apiKey = "";
+    if (settings.provider !== "ChatGPT") {
+        apiKey = await utils.getApiKey();
     }
     const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-    }
+        "Content-Type": "application/json",
+        "User-Token": settings.userToken ?? ""
+    };
 
-    let isChatAPI = true
-    if (settings.provider === 'Azure' && settings.apiURLPath && settings.apiURLPath.indexOf('/chat/completions') < 0) {
-        // Azure OpenAI Service supports multiple API.
-        // We should check if the settings.apiURLPath is match `/deployments/{deployment-id}/chat/completions`.
-        // If not, we should use the legacy parameters.
-        isChatAPI = false
-        body[
-            'prompt'
-        ] = `<|im_start|>system\n${rolePrompt}\n<|im_end|>\n<|im_start|>user\n${commandPrompt}\n${contentPrompt}\n<|im_end|>\n<|im_start|>assistant\n`
-        body['stop'] = ['<|im_end|>']
-    } else if (settings.provider === 'ChatGPT') {
-        let resp: Response | null = null
-        resp = await fetcher(utils.defaultChatGPTAPIAuthSession, { signal: query.signal })
-        if (resp.status !== 200) {
-            query.onError?.('Failed to fetch ChatGPT Web accessToken.')
-            query.onStatusCode?.(resp.status)
-            return
+    const messages = [
+        {
+            role: "system",
+            content: rolePrompt
+        },
+        ...assistantPrompts.map((prompt) => {
+            return {
+                role: "user",
+                content: prompt
+            };
+        }),
+        {
+            role: "user",
+            content: commandPrompt
         }
-        const respJson = await resp?.json()
-        apiKey = respJson.accessToken
-        body = {
-            action: 'next',
-            messages: [
-                {
-                    id: utils.generateUUID(),
-                    role: 'user',
-                    content: {
-                        content_type: 'text',
-                        parts: [
-                            codeBlock`
-                        ${rolePrompt}
-                        
-                        ${commandPrompt}:
-                        ${contentPrompt}
-                        `,
-                        ],
-                    },
-                },
-            ],
-            model: settings.apiModel, // 'text-davinci-002-render-sha'
-            parent_message_id: utils.generateUUID(),
-        }
-    } else {
-        const messages = [
-            {
-                role: 'system',
-                content: rolePrompt,
-            },
-            ...assistantPrompts.map((prompt) => {
-                return {
-                    role: 'user',
-                    content: prompt,
-                }
-            }),
-            {
-                role: 'user',
-                content: commandPrompt,
-            },
-        ]
-        if (lastPrompt){
-            messages.push({
-                role: 'assistant',
-                content: lastPrompt,
-            })
-        }
-        if (contentPrompt) {
-            messages.push({
-                role: 'user',
-                content: contentPrompt,
-            })
-        }
-        body['messages'] = messages
+    ];
+    if (lastPrompt) {
+        messages.push({
+            role: "assistant",
+            content: lastPrompt
+        });
     }
+    if (contentPrompt) {
+        messages.push({
+            role: "user",
+            content: contentPrompt
+        });
+    }
+    body["messages"] = messages;
 
     switch (settings.provider) {
-        case 'OpenAI':
-        case 'ChatGPT':
-            headers['Authorization'] = `Bearer ${apiKey}`
-            break
-
-        case 'Azure':
-            headers['api-key'] = `${apiKey}`
-            break
+        case "OpenAI":
+        case "ChatGPT":
+            headers["Authorization"] = `Bearer ${apiKey}`;
+            break;
+        case "Azure":
+            headers["api-key"] = `${apiKey}`;
+            break;
     }
 
-    if (settings.provider === 'ChatGPT') {
-        let conversationId = ''
-        let length = 0
-        await fetchSSE(`${utils.defaultChatGPTWebAPI}/conversation`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(body),
-            signal: query.signal,
-            onStatusCode: (status) => {
-                query.onStatusCode?.(status)
-            },
-            onMessage: (msg) => {
-                let resp
-                try {
-                    resp = JSON.parse(msg)
-                    // eslint-disable-next-line no-empty
-                } catch {
-                    query.onFinish('stop')
-                    return
-                }
-                if (!conversationId) {
-                    conversationId = resp.conversation_id
-                }
-                const { finish_details: finishDetails } = resp.message
-                if (finishDetails) {
-                    query.onFinish(finishDetails.type)
-                    return
-                }
+    if (settings.provider !== "OpenAI") {
+        query.onError("Unsupported provider");
+        return;
+    }
 
-                const { content, author } = resp.message
-                if (author.role === 'assistant') {
-                    const targetTxt = content.parts.join('')
-                    let textDelta = targetTxt.slice(length)
-                    if (quoteProcessor) {
-                        textDelta = quoteProcessor.processText(textDelta)
-                    }
-                    query.onMessage({ content: textDelta, role: '', isWordMode })
-                    length = targetTxt.length
-                }
-            },
-            onError: (err) => {
-                if (err instanceof Error) {
-                    query.onError(err.message)
-                    return
-                }
-                if (typeof err === 'string') {
-                    query.onError(err)
-                    return
-                }
-                if (typeof err === 'object') {
-                    const { detail } = err
-                    if (detail) {
-                        const { message } = detail
-                        if (message) {
-                            query.onError(`ChatGPT Web: ${message}`)
-                            return
-                        }
-                    }
-                    query.onError(`ChatGPT Web: ${JSON.stringify(err)}`)
-                    return
-                }
-                const { error } = err
-                if (error instanceof Error) {
-                    query.onError(error.message)
-                    return
-                }
-                if (typeof error === 'object') {
-                    const { message } = error
-                    if (message) {
-                        query.onError(message)
-                        return
-                    }
-                }
-                query.onError('Unknown error')
-            },
-        })
-        if (conversationId) {
-            await fetcher(`${utils.defaultChatGPTWebAPI}/conversation/${conversationId}`, {
-                method: 'PATCH',
-                headers,
-                body: JSON.stringify({ is_visible: false }),
-            })
-        }
-    } else {
-        const url = urlJoin(settings.apiURL, settings.apiURLPath)
+    try {
         await fetchSSE(url, {
-            method: 'POST',
+            method: "POST",
             headers,
             body: JSON.stringify(body),
             signal: query.signal,
             onMessage: (msg) => {
-                let resp
+                let resp;
                 try {
-                    resp = JSON.parse(msg)
+                    resp = JSON.parse(msg);
                     // eslint-disable-next-line no-empty
                 } catch {
                     query.onFinish('stop')
@@ -405,45 +286,27 @@ export async function chat(query: any) {
 
                 const { choices, id, created } = resp
                 if (!choices || choices.length === 0) {
-                    return { error: 'No result' }
+                    return { error: "No result" };
                 }
-                const { finish_reason: finishReason } = choices[0]
+                const { finish_reason: finishReason } = choices[0];
 
-                let targetTxt = ''
-                if (!isChatAPI) {
-                    // It's used for Azure OpenAI Service's legacy parameters.
-                    targetTxt = choices[0].text
+                let targetTxt = "";
+                const { content = "", role } = choices[0].delta;
 
-                    if (quoteProcessor) {
-                        targetTxt = quoteProcessor.processText(targetTxt)
-                    }
+                targetTxt = content;
 
-                    query.onMessage({
-                        messageId: id,
-                        content: targetTxt,
-                        role: "",
-                        isWordMode,
-                        createAt: created,
-                        finishReason
-                    });
-                } else {
-                    const { content = "", role } = choices[0].delta;
-
-                    targetTxt = content;
-
-                    if (quoteProcessor) {
-                        targetTxt = quoteProcessor.processText(targetTxt);
-                    }
-
-                    query.onMessage({
-                        messageId: id,
-                        content: targetTxt,
-                        role,
-                        isWordMode,
-                        createAt: created,
-                        finishReason
-                    });
+                if (quoteProcessor) {
+                    targetTxt = quoteProcessor.processText(targetTxt);
                 }
+
+                query.onMessage({
+                    messageId: id,
+                    content: targetTxt,
+                    role,
+                    isWordMode,
+                    createAt: created,
+                    finishReason
+                });
                 if (finishReason) {
                     query.onFinish(finishReason);
                     return;
@@ -470,15 +333,17 @@ export async function chat(query: any) {
                     query.onError(error.message)
                     return
                 }
-                if (typeof error === 'object') {
-                    const { message } = error
+                if (typeof error === "object") {
+                    const { message } = error;
                     if (message) {
-                        query.onError(message)
-                        return
+                        query.onError(message);
+                        return;
                     }
                 }
-                query.onError('Unknown error')
+                query.onError("Unknown error");
             },
         })
+    } catch (e) {
+        query.onError("Unknown error");
     }
 }

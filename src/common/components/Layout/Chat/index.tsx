@@ -219,7 +219,8 @@ function ChatHomeComponent(props: IChatProps) {
       },
       onError: (error: any) => {
         console.log(error);
-        setOnSubmitting(false)
+        notice.error("请求失败，请检查网络及配置！");
+        setOnSubmitting(false);
         setNeedShowThinking(false)
       },
     })

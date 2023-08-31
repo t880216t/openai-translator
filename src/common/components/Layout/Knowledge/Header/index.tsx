@@ -13,8 +13,9 @@ interface IHeaderProps {
   listType: string;
   onListTypeChange: (listType: string) => void;
   showDrawer: boolean
-  submitLoading: boolean
-  onStartKnowLedgeChat: () => void
+  submitLoading: boolean;
+  needShowThinking: boolean;
+  onStartKnowLedgeChat: () => void;
   selectKnowledgeList: IKnowledge[]
   onCloseDrawer: () => void
   onStopSend: () => void
@@ -61,6 +62,7 @@ function Header(props: IHeaderProps) {
           selectKnowledgeList={props.selectKnowledgeList}
           showDrawer={props.showDrawer}
           submitLoading={props.submitLoading}
+          needShowThinking={props.needShowThinking}
           onCloseDrawer={props.onCloseDrawer}
           onSendMessage={props.onSendMessage}
           onStopSend={props.onStopSend}

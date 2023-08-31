@@ -44,7 +44,7 @@ function Send(props: ISendProps) {
   };
 
   const onPressEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.keyCode === 13 && !e.shiftKey) {
       e.preventDefault();
       handleUserPrompt((e.target as HTMLTextAreaElement).value);
     }
@@ -63,7 +63,7 @@ function Send(props: ISendProps) {
 
   // 重构
   const handleUserPrompt = async (prompt: string) => {
-    if (prompt.trim() === "") {
+    if (prompt?.trim() === "") {
       return;
     }
     setOriginalText("");

@@ -24,17 +24,28 @@ export async function request(url: string, options: RequestInit): Promise<any> {
 }
 
 export async function queryKnowledgeList(params: any) {
-    return request(`/api/knowledge/list`, {
-        method: 'POST',
+    return request(`/v1/knowledge/list`, {
+        method: "POST",
         body: JSON.stringify(params),
         headers: {
-            'Content-Type': 'application/json',
-        },
+            "Content-Type": "application/json"
+        }
     });
 }
 
 export async function queryKnowledgeChat(params: any) {
-    return request(`/api/knowledge/question`, {
+    return request(`/v1/knowledge/question`, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+            "Content-Type": "application/json"
+        },
+        signal: params?.signal
+    });
+}
+
+export async function queryKnowledgeChatStream(params: any) {
+    return request(`/v1/knowledge/stream_question`, {
         method: "POST",
         body: JSON.stringify(params),
         headers: {
@@ -45,41 +56,41 @@ export async function queryKnowledgeChat(params: any) {
 }
 
 export async function queryKnowledgeRemove(params: any) {
-    return request(`/api/knowledge/remove`, {
-        method: 'POST',
+    return request(`/v1/knowledge/remove`, {
+        method: "POST",
         body: JSON.stringify(params),
         headers: {
-            'Content-Type': 'application/json',
-        },
+            "Content-Type": "application/json"
+        }
     });
 }
 
 export async function queryKnowledgeCreate(params: any) {
-    return request(`/api/knowledge/create`, {
-        method: 'POST',
+    return request(`/v1/knowledge/create`, {
+        method: "POST",
         body: JSON.stringify(params),
         headers: {
-            'Content-Type': 'application/json',
-        },
+            "Content-Type": "application/json"
+        }
     });
 }
 
 export async function queryKnowledgeShare(params: any) {
-    return request(`/api/knowledge/share`, {
-        method: 'POST',
+    return request(`/v1/knowledge/share`, {
+        method: "POST",
         body: JSON.stringify(params),
         headers: {
-            'Content-Type': 'application/json',
-        },
+            "Content-Type": "application/json"
+        }
     });
 }
 
 export async function queryKnowledgeFileDownload(params: any) {
-    return request(`/api/knowledge/download`, {
-        method: 'POST',
+    return request(`/v1/knowledge/download`, {
+        method: "POST",
         body: JSON.stringify(params),
         headers: {
-            'Content-Type': 'application/json',
-        },
+            "Content-Type": "application/json"
+        }
     });
 }

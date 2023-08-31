@@ -1,6 +1,6 @@
 #![cfg_attr(
     all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+windows_subsystem = "windows"
 )]
 
 mod config;
@@ -10,6 +10,8 @@ mod ocr;
 mod tray;
 mod utils;
 mod windows;
+mod web_content_fetcher; // 导入自定义模块
+
 
 #[cfg(target_os = "macos")]
 use cocoa::appkit::NSWindow;
@@ -20,6 +22,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use sysinfo::{CpuExt, System, SystemExt};
 use tauri_plugin_autostart::MacosLauncher;
 
+use web_content_fetcher::fetch_web_content;
 use crate::config::{clear_config_cache, get_config_content};
 use crate::lang::detect_lang;
 use crate::ocr::ocr;
@@ -349,6 +352,7 @@ fn main() {
             set_main_window_always_on_top,
             ocr,
             detect_lang,
+            fetch_web_content,
         ])
         .system_tray(tray::menu())
         .on_system_tray_event(tray::handler)

@@ -16,12 +16,13 @@ interface IDrawerProps {
   selectKnowledgeList: IKnowledge[];
   showDrawer: boolean;
   submitLoading: boolean;
+  needShowThinking: boolean;
   onCloseDrawer: () => void;
   onStopSend: () => void;
   onDelete: (id: string) => void;
-  onDownload: (id: string, fileName:string) => void;
+  onDownload: (id: string, fileName: string) => void;
   onSendMessage: (prompt: string) => void;
-  messageList: {[key: string]: IMessage}
+  messageList: { [key: string]: IMessage };
 }
 
 function BasicComponent(props: IDrawerProps) {
@@ -65,11 +66,12 @@ function BasicComponent(props: IDrawerProps) {
             <Button onClick={() => props?.onCloseDrawer()} type="text" icon={<CloseOutlined />} />
           </div>
         </div>
-        <Divider style={{margin: 0, background: theme.colors.backgroundTertiary}} />
-        <ChatContent needShowThinking={true} messageList={props.messageList} onSubmitting={props.submitLoading} onDelete={props.onDelete}/>
-        <div  style={{padding: "10px 5px"}}>
+        <Divider style={{ margin: 0, background: theme.colors.backgroundTertiary }} />
+        <ChatContent needShowThinking={props.needShowThinking} messageList={props.messageList}
+                     onSubmitting={props.submitLoading} onDelete={props.onDelete} />
+        <div style={{ padding: "10px 5px" }}>
           <ChatSend
-            text={props?.text || ''}
+            text={props?.text || ""}
             onSendMessage={async (prompt: string) => await handleSendMessage(prompt)}
             onStopSend={props.onStopSend}
             onSubmitting={props.submitLoading}

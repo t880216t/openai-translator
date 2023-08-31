@@ -1165,9 +1165,9 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
                             >
                                 {t('It is highly recommended to disable this feature and use the Clip Extension')}
                                 <a
-                                    href='https://github.com/openai-translator/openai-translator/blob/main/CLIP-EXTENSIONS.md'
-                                    target='_blank'
-                                    rel='noreferrer'
+                                  href="https://github.com/t880216t/openai-translator/blob/main/CLIP-EXTENSIONS.md"
+                                  target="_blank"
+                                  rel='noreferrer'
                                 >
                                     {t('Clip Extension')}
                                 </a>
