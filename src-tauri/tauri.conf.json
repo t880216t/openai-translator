@@ -118,7 +118,7 @@
       {
         "url": "src/tauri/index.html",
         "fullscreen": false,
-        "width": 450,
+        "width": 400,
         "height": 750,
         "resizable": true,
         "title": "AI Helper",
